@@ -94,7 +94,7 @@ ENABLE_PROXY_FIX = False
 # GLOBALS FOR APP Builder
 # ------------------------------
 # Uncomment to setup Your App name
-APP_NAME = 'Superset'
+APP_NAME = 'SavvyBI'
 
 # Uncomment to setup an App icon
 APP_ICON = '/static/assets/images/superset-logo@2x.png'
@@ -247,7 +247,7 @@ INTERVAL = 1
 BACKUP_COUNT = 30
 
 # Set this API key to enable Mapbox visualizations
-MAPBOX_API_KEY = os.environ.get('MAPBOX_API_KEY', '')
+MAPBOX_API_KEY = os.environ.get('MAPBOX_API_KEY', 'pk.eyJ1IjoiZWxwcmVzaWRlbnRlIiwiYSI6ImNqZ3lnNzBteTBkOWQycW1pbzFsazdwOGQifQ.ntRZ44-1wVGMLuuSxljvhg')
 
 # Maximum number of rows returned in the SQL editor
 SQL_MAX_ROW = 1000000
