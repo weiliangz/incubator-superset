@@ -115,7 +115,10 @@
     "supercluster": "https://github.com/georgeke/supercluster/tarball/ac3492737e7ce98e07af679623aad452373bbc40",
     "underscore": "^1.8.3",
     "urijs": "^1.18.10",
-    "viewport-mercator-project": "^5.0.0"
+    "viewport-mercator-project": "^5.0.0",
+    "echarts": "^3.7.0",
+    "dc": "^3.0",
+    "crossfilter": "^1.3.12"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",

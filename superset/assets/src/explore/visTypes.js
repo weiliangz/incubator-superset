@@ -1714,6 +1714,47 @@ export const visTypes = {
       sections.NVD3TimeSeries[1],
     ],
   },
+
+  echarts_funnel: {
+    label: t('Funnel View'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Query'),
+        expanded: true,
+        controlSetRows: [
+          ['metrics', 'groupby'],
+          ['limit'],
+        ],
+      },
+      {
+        label: t('Chart Options'),
+        controlSetRows: [
+          ['color_scheme'],
+        ],
+      },
+    ],
+  },
+    dc_crossfilter: {
+    label: t('DC_Crossfilter Example'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Query'),
+        expanded: true,
+        controlSetRows: [
+          ['metrics', 'groupby'],
+          ['limit'],
+        ],
+      },
+      {
+        label: t('Chart Options'),
+        controlSetRows: [
+          ['color_scheme'],
+        ],
+      },
+    ],
+  },
 };
 
 export default visTypes;

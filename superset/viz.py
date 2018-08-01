@@ -39,13 +39,11 @@ from six.moves import cPickle as pkl, reduce
 from superset import app, cache, get_manifest_file, utils
 from superset.utils import DTTM_ALIAS, JS_MAX_INTEGER, merge_extra_filters
 
-
 config = app.config
 stats_logger = config.get('STATS_LOGGER')
 
 
 class BaseViz(object):
-
     """All visualizations derive this base class"""
 
     viz_type = None
@@ -218,8 +216,8 @@ class BaseViz(object):
         merge_extra_filters(form_data)
 
         granularity = (
-            form_data.get('granularity') or
-            form_data.get('granularity_sqla')
+                form_data.get('granularity') or
+                form_data.get('granularity_sqla')
         )
         limit = int(form_data.get('limit') or 0)
         timeseries_limit_metric = form_data.get('timeseries_limit_metric')
@@ -448,7 +446,6 @@ class BaseViz(object):
 
 
 class TableViz(BaseViz):
-
     """A basic html table that is sortable and searchable"""
 
     viz_type = 'table'
@@ -460,8 +457,8 @@ class TableViz(BaseViz):
         fd = self.form_data
         # TODO handle datasource-type-specific code in datasource
         conditions_met = (
-            (fd.get('granularity') and fd.get('granularity') != 'all') or
-            (fd.get('granularity_sqla') and fd.get('time_grain_sqla'))
+                (fd.get('granularity') and fd.get('granularity') != 'all') or
+                (fd.get('granularity_sqla') and fd.get('time_grain_sqla'))
         )
         if fd.get('include_time') and not conditions_met:
             raise Exception(_(
@@ -525,8 +522,8 @@ class TableViz(BaseViz):
                 df[m_name] = pd.Series(metric_percents[m], name=m_name)
             # Remove metrics that are not in the main metrics list
             for m in filter(
-                lambda m: m not in fd['metrics'] and m in df.columns,
-                percent_metrics,
+                    lambda m: m not in fd['metrics'] and m in df.columns,
+                    percent_metrics,
             ):
                 del df[m]
 
@@ -547,7 +544,6 @@ class TableViz(BaseViz):
 
 
 class TimeTableViz(BaseViz):
-
     """A data table with rich time-series related columns"""
 
     viz_type = 'time_table'
@@ -588,7 +584,6 @@ class TimeTableViz(BaseViz):
 
 
 class PivotTableViz(BaseViz):
-
     """A pivot table view, define your rows, columns and metrics"""
 
     viz_type = 'pivot_table'
@@ -641,7 +636,6 @@ class PivotTableViz(BaseViz):
 
 
 class MarkupViz(BaseViz):
-
     """Use html or markdown to create a free form widget"""
 
     viz_type = 'markup'
@@ -663,7 +657,6 @@ class MarkupViz(BaseViz):
 
 
 class SeparatorViz(MarkupViz):
-
     """Use to create section headers in a dashboard, similar to `Markup`"""
 
     viz_type = 'separator'
@@ -671,7 +664,6 @@ class SeparatorViz(MarkupViz):
 
 
 class WordCloudViz(BaseViz):
-
     """Build a colorful word cloud
 
     Uses the nice library at:
@@ -698,7 +690,6 @@ class WordCloudViz(BaseViz):
 
 
 class TreemapViz(BaseViz):
-
     """Tree map visualisation for hierarchical data."""
 
     viz_type = 'treemap'
@@ -724,7 +715,6 @@ class TreemapViz(BaseViz):
 
 
 class CalHeatmapViz(BaseViz):
-
     """Calendar heatmap."""
 
     viz_type = 'cal_heatmap'
@@ -740,7 +730,7 @@ class CalHeatmapViz(BaseViz):
         records = df.to_dict('records')
         for metric in self.metrics:
             data[metric] = {
-                str(obj[DTTM_ALIAS].value / 10**9): obj.get(metric)
+                str(obj[DTTM_ALIAS].value / 10 ** 9): obj.get(metric)
                 for obj in records
             }
 
@@ -779,7 +769,6 @@ class CalHeatmapViz(BaseViz):
 
 
 class NVD3Viz(BaseViz):
-
     """Base class for all nvd3 vizs"""
 
     credits = '<a href="http://nvd3.org/">NVD3.org</a>'
@@ -789,7 +778,6 @@ class NVD3Viz(BaseViz):
 
 
 class BoxPlotViz(NVD3Viz):
-
     """Box plot viz from ND3"""
 
     viz_type = 'box_plot'
@@ -878,7 +866,6 @@ class BoxPlotViz(NVD3Viz):
 
 
 class BubbleViz(NVD3Viz):
-
     """Based on the NVD3 bubble chart"""
 
     viz_type = 'bubble'
@@ -928,7 +915,6 @@ class BubbleViz(NVD3Viz):
 
 
 class BulletViz(NVD3Viz):
-
     """Based on the NVD3 bullet chart"""
 
     viz_type = 'bullet'
@@ -977,7 +963,6 @@ class BulletViz(NVD3Viz):
 
 
 class BigNumberViz(BaseViz):
-
     """Put emphasis on a single metric with this big number viz"""
 
     viz_type = 'big_number'
@@ -1006,7 +991,6 @@ class BigNumberViz(BaseViz):
 
 
 class BigNumberTotalViz(BaseViz):
-
     """Put emphasis on a single metric with this big number viz"""
 
     viz_type = 'big_number_total'
@@ -1033,7 +1017,6 @@ class BigNumberTotalViz(BaseViz):
 
 
 class NVD3TimeSeriesViz(NVD3Viz):
-
     """A rich line chart component with tons of options"""
 
     viz_type = 'line'
@@ -1202,7 +1185,6 @@ class NVD3TimeSeriesViz(NVD3Viz):
 
 
 class NVD3DualLineViz(NVD3Viz):
-
     """A rich line chart with dual axis"""
 
     viz_type = 'dual_line'
@@ -1221,7 +1203,7 @@ class NVD3DualLineViz(NVD3Viz):
             raise Exception(_('Pick a metric for right axis!'))
         if m1 == m2:
             raise Exception(_('Please choose different metrics'
-                            ' on left and right axis'))
+                              ' on left and right axis'))
         return d
 
     def to_series(self, df, classed=''):
@@ -1276,7 +1258,6 @@ class NVD3DualLineViz(NVD3Viz):
 
 
 class NVD3TimeSeriesBarViz(NVD3TimeSeriesViz):
-
     """A bar chart where the x axis is time"""
 
     viz_type = 'bar'
@@ -1285,7 +1266,6 @@ class NVD3TimeSeriesBarViz(NVD3TimeSeriesViz):
 
 
 class NVD3TimePivotViz(NVD3TimeSeriesViz):
-
     """Time Series - Periodicity Pivot"""
 
     viz_type = 'time_pivot'
@@ -1326,7 +1306,6 @@ class NVD3TimePivotViz(NVD3TimeSeriesViz):
 
 
 class NVD3CompareTimeSeriesViz(NVD3TimeSeriesViz):
-
     """A line chart component where you can compare the % change over time"""
 
     viz_type = 'compare'
@@ -1334,7 +1313,6 @@ class NVD3CompareTimeSeriesViz(NVD3TimeSeriesViz):
 
 
 class NVD3TimeSeriesStackedViz(NVD3TimeSeriesViz):
-
     """A rich stack area chart"""
 
     viz_type = 'area'
@@ -1343,7 +1321,6 @@ class NVD3TimeSeriesStackedViz(NVD3TimeSeriesViz):
 
 
 class DistributionPieViz(NVD3Viz):
-
     """Annoy visualization snobs with this controversial pie chart"""
 
     viz_type = 'pie'
@@ -1361,7 +1338,6 @@ class DistributionPieViz(NVD3Viz):
 
 
 class HistogramViz(BaseViz):
-
     """Histogram"""
 
     viz_type = 'histogram'
@@ -1402,7 +1378,6 @@ class HistogramViz(BaseViz):
 
 
 class DistributionBarViz(DistributionPieViz):
-
     """A good old bar chart"""
 
     viz_type = 'dist_bar'
@@ -1413,8 +1388,8 @@ class DistributionBarViz(DistributionPieViz):
         d = super(DistributionBarViz, self).query_obj()  # noqa
         fd = self.form_data
         if (
-            len(d['groupby']) <
-            len(fd.get('groupby') or []) + len(fd.get('columns') or [])
+                len(d['groupby']) <
+                len(fd.get('groupby') or []) + len(fd.get('columns') or [])
         ):
             raise Exception(
                 _("Can't have overlap between Series and Breakdowns"))
@@ -1470,7 +1445,6 @@ class DistributionBarViz(DistributionPieViz):
 
 
 class SunburstViz(BaseViz):
-
     """A multi level sunburst chart"""
 
     viz_type = 'sunburst'
@@ -1501,7 +1475,6 @@ class SunburstViz(BaseViz):
 
 
 class SankeyViz(BaseViz):
-
     """A Sankey diagram that requires a parent-child dataset"""
 
     viz_type = 'sankey'
@@ -1550,7 +1523,6 @@ class SankeyViz(BaseViz):
 
 
 class DirectedForceViz(BaseViz):
-
     """An animated directed force layout graph visualization"""
 
     viz_type = 'directed_force'
@@ -1571,7 +1543,6 @@ class DirectedForceViz(BaseViz):
 
 
 class ChordViz(BaseViz):
-
     """A Chord diagram"""
 
     viz_type = 'chord'
@@ -1604,7 +1575,6 @@ class ChordViz(BaseViz):
 
 
 class CountryMapViz(BaseViz):
-
     """A country centric"""
 
     viz_type = 'country_map'
@@ -1632,7 +1602,6 @@ class CountryMapViz(BaseViz):
 
 
 class WorldMapViz(BaseViz):
-
     """A country centric world map"""
 
     viz_type = 'world_map'
@@ -1682,7 +1651,6 @@ class WorldMapViz(BaseViz):
 
 
 class FilterBoxViz(BaseViz):
-
     """A multi filter, multi-choice filter box to make dashboards interactive"""
 
     viz_type = 'filter_box'
@@ -1728,7 +1696,6 @@ class FilterBoxViz(BaseViz):
 
 
 class IFrameViz(BaseViz):
-
     """You can squeeze just about anything in this iFrame component"""
 
     viz_type = 'iframe'
@@ -1744,7 +1711,6 @@ class IFrameViz(BaseViz):
 
 
 class ParallelCoordinatesViz(BaseViz):
-
     """Interactive parallel coordinate implementation
 
     Uses this amazing javascript library
@@ -1773,7 +1739,6 @@ class ParallelCoordinatesViz(BaseViz):
 
 
 class HeatmapViz(BaseViz):
-
     """A nice heatmap visualization that support high density through canvas"""
 
     viz_type = 'heatmap'
@@ -1826,7 +1791,6 @@ class HeatmapViz(BaseViz):
 
 
 class HorizonViz(NVD3TimeSeriesViz):
-
     """Horizon chart
 
     https://www.npmjs.com/package/d3-horizon-chart
@@ -1840,7 +1804,6 @@ class HorizonViz(NVD3TimeSeriesViz):
 
 
 class MapboxViz(BaseViz):
-
     """Rich maps made with Mapbox"""
 
     viz_type = 'mapbox'
@@ -1947,7 +1910,6 @@ class MapboxViz(BaseViz):
 
 
 class DeckGLMultiLayer(BaseViz):
-
     """Pile on multiple DeckGL layers"""
 
     viz_type = 'deck_multi'
@@ -1973,7 +1935,6 @@ class DeckGLMultiLayer(BaseViz):
 
 
 class BaseDeckGLViz(BaseViz):
-
     """Base class for deck.gl visualizations"""
 
     is_timeseries = False
@@ -2079,7 +2040,6 @@ class BaseDeckGLViz(BaseViz):
 
 
 class DeckScatterViz(BaseDeckGLViz):
-
     """deck.gl's ScatterLayer"""
 
     viz_type = 'deck_scatter'
@@ -2091,7 +2051,7 @@ class DeckScatterViz(BaseDeckGLViz):
         fd = self.form_data
         self.is_timeseries = fd.get('time_grain_sqla') or fd.get('granularity')
         self.point_radius_fixed = (
-            fd.get('point_radius_fixed') or {'type': 'fix', 'value': 500})
+                fd.get('point_radius_fixed') or {'type': 'fix', 'value': 500})
         return super(DeckScatterViz, self).query_obj()
 
     def get_metrics(self):
@@ -2121,7 +2081,6 @@ class DeckScatterViz(BaseDeckGLViz):
 
 
 class DeckScreengrid(BaseDeckGLViz):
-
     """deck.gl's ScreenGridLayer"""
 
     viz_type = 'deck_screengrid'
@@ -2143,7 +2102,6 @@ class DeckScreengrid(BaseDeckGLViz):
 
 
 class DeckGrid(BaseDeckGLViz):
-
     """deck.gl's DeckLayer"""
 
     viz_type = 'deck_grid'
@@ -2158,7 +2116,6 @@ class DeckGrid(BaseDeckGLViz):
 
 
 class DeckPathViz(BaseDeckGLViz):
-
     """deck.gl's PathLayer"""
 
     viz_type = 'deck_path'
@@ -2190,7 +2147,6 @@ class DeckPathViz(BaseDeckGLViz):
 
 
 class DeckPolygon(DeckPathViz):
-
     """deck.gl's Polygon Layer"""
 
     viz_type = 'deck_polygon'
@@ -2199,7 +2155,6 @@ class DeckPolygon(DeckPathViz):
 
 
 class DeckHex(BaseDeckGLViz):
-
     """deck.gl's DeckLayer"""
 
     viz_type = 'deck_hex'
@@ -2214,7 +2169,6 @@ class DeckHex(BaseDeckGLViz):
 
 
 class DeckGeoJson(BaseDeckGLViz):
-
     """deck.gl's GeoJSONLayer"""
 
     viz_type = 'deck_geojson'
@@ -2233,7 +2187,6 @@ class DeckGeoJson(BaseDeckGLViz):
 
 
 class DeckArc(BaseDeckGLViz):
-
     """deck.gl's Arc Layer"""
 
     viz_type = 'deck_arc'
@@ -2257,7 +2210,6 @@ class DeckArc(BaseDeckGLViz):
 
 
 class EventFlowViz(BaseViz):
-
     """A visualization to explore patterns in event sequences"""
 
     viz_type = 'event_flow'
@@ -2288,7 +2240,6 @@ class EventFlowViz(BaseViz):
 
 
 class PairedTTestViz(BaseViz):
-
     """A table displaying paired t-test values"""
 
     viz_type = 'paired_ttest'
@@ -2348,7 +2299,6 @@ class PairedTTestViz(BaseViz):
 
 
 class RoseViz(NVD3TimeSeriesViz):
-
     viz_type = 'rose'
     verbose_name = _('Time Series - Nightingale Rose Chart')
     sort_series = False
@@ -2374,7 +2324,6 @@ class RoseViz(NVD3TimeSeriesViz):
 
 
 class PartitionViz(NVD3TimeSeriesViz):
-
     """
     A hierarchical data visualization with support for time series.
     """
@@ -2507,6 +2456,31 @@ class PartitionViz(NVD3TimeSeriesViz):
         else:
             levels = self.levels_for('agg_sum', [DTTM_ALIAS] + groups, df)
         return self.nest_values(levels)
+
+
+class EchartsFunnelViz(BaseViz):
+    """ Funnel Chart"""
+    viz_type = 'echarts_funnel'
+    is_timeseries = False
+
+    def get_data(self, df):
+        df = df.pivot_table(index=self.groupby, values=[self.metrics[0]])
+        df.sort_values(by=self.metrics[0], ascending=False, inplace=True)
+        df = df.reset_index()
+        df.columns = ['name', 'value']
+        return df.to_dict(orient='records')
+
+class DCCrossfilterViz(BaseViz):
+    """ Funnel Chart"""
+    viz_type = 'dc_crossfilter'
+    is_timeseries = False
+
+    def get_data(self, df):
+        fd = self.form_data
+        df = df.reset_index()
+        df.columns = ['Spent','Name',  'Year']
+        s = df.to_dict(orient='records')
+        return s
 
 
 viz_types = {
