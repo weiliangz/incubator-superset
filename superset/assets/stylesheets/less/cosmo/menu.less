@@ -1,0 +1,84 @@
+@color_1: #607d8b;
+@color_2: #666;
+@font_family_1: "Poppins", sans-serif;
+
+header {
+	.navbar.navbar-static-top.navbar-inverse {
+		border: 1px solid rgba(0,0,0,.125);
+		box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+	}
+}
+body {
+	background: #eef5f9;
+	font-family: @font_family_1;
+}
+.left-menu {
+	background: #fff;
+	height: auto;
+	float: left;
+	border: 1px solid rgba(0,0,0,.125);
+	box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+	li {
+		width: 100%;
+	}
+}
+div#app {
+	width: 100%;
+}
+#content {
+	margin: 0;
+	padding: 0 5px;
+}
+.panel {
+	border: 1px solid rgba(0,0,0,.125);
+	box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+}
+#options {
+	box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+	.panel {
+		border: none;
+		box-shadow: none;
+	}
+}
+.navbar-nav {
+	>li {
+		>a {
+			color: @color_1;
+		}
+	}
+}
+.dropdown-menu {
+	>li {
+		>a {
+			color: @color_1;
+		}
+	}
+}
+.navbar-inverse {
+	.navbar-nav {
+		>li {
+			>a {
+				color: @color_1;
+			}
+		}
+	}
+}
+tr.reactable-column-header {
+	color: @color_2;
+}
+.tab-content {
+	h2 {
+		color: @color_2;
+	}
+	h3 {
+		color: @color_2;
+	}
+}
+table {
+	th {
+		color: @color_2;
+		a {
+			color: @color_2;
+		}
+	}
+}

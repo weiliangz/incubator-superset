@@ -1,4 +1,4 @@
-{% import 'appbuilder/general/lib.html' as lib %}
+{% set menu = appbuilder.menu %} {% set languages = appbuilder.languages %}{% import 'appbuilder/general/lib.html' as lib %}
 <html>
   <head>
     <title>
@@ -39,12 +39,23 @@
         </header>
       {% endif %}
     {% endblock %}
-
-    {% block body %}
-      <div id="app" data-bootstrap="{{ bootstrap_data }}" >
-        <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
+    <div class="row" id= "content" >
+      <div class="col-lg-3">
+        <div class="left-menu">
+            <ul class="nav navbar-nav">
+                {% include 'appbuilder/navbar_menu.html' %}
+            </ul>
+        </div>
       </div>
-    {% endblock %}
+      <div class="col-lg-8">
+          {% block body %}
+          <div id="app" data-bootstrap="{{ bootstrap_data }}"  >
+            <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
+          </div>
+        {% endblock %}
+      </div>
+    </div>
+    
 
     <!-- Modal for misc messages / alerts  -->
     <div class="misc-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

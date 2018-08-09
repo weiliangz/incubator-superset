@@ -1,7 +1,5 @@
-{% set menu = appbuilder.menu %}
-{% set languages = appbuilder.languages %}
-{% set WARNING_MSG = appbuilder.app.config.get('WARNING_MSG') %}
-
+{% set menu = appbuilder.menu %} {% set languages = appbuilder.languages %} {% set WARNING_MSG = appbuilder.app.config.get('WARNING_MSG')
+%}
 <div class="navbar navbar-static-top {{menu.extra_classes}}" role="navigation">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -11,40 +9,101 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="/superset/profile/{{ current_user.username }}/">
-        <img
-          width="126" src="{{ appbuilder.app_icon }}"
-          alt="{{ appbuilder.app_name }}"
-        />
+        <img width="126" src="{{ appbuilder.app_icon }}" alt="{{ appbuilder.app_name }}" />
       </a>
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         {% if WARNING_MSG %}
-          <li class="alert alert-danger">
-            {{ WARNING_MSG | safe }}
-          </li>
-        {% endif %}
-        {% include 'appbuilder/navbar_menu.html' %}
+        <li class="alert alert-danger">
+          {{ WARNING_MSG | safe }}
+        </li>
+        {% endif %} 
+   
+          <!-- <ul class="nav navbar-nav navbar-left"> -->
+              <!-- {% include 'appbuilder/navbar_right.html' %} -->
+              <!-- <li>
+                <a href="/static/assets/version_info.json" title="Version info">
+                  <i class="fa fa-code-fork"></i> Version info &nbsp;
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/apache/incubator-superset" title="Superset's Github" target="_blank">
+                  <i class="fa fa-github"></i> Superset's Github &nbsp;
+                </a>
+              </li>
+              <li>
+                <a href="https://superset.incubator.apache.org" title="Documentation" target="_blank">
+                  <i class="fa fa-book"></i> Documentation &nbsp;
+                </a>
+              </li> -->
+            <!-- </ul> -->
       </ul>
+
       <ul class="nav navbar-nav navbar-right">
         {% include 'appbuilder/navbar_right.html' %}
-        <li>
-          <a href="/static/assets/version_info.json" title="Version info">
-            <i class="fa fa-code-fork"></i> &nbsp;
-          </a>
-        </li>
-        <li>
-          <a href="https://github.com/apache/incubator-superset" title="Superset's Github" target="_blank">
-            <i class="fa fa-github"></i> &nbsp;
-          </a>
-        </li>
-        <li>
-          <a href="https://superset.incubator.apache.org" title="Documentation" target="_blank">
-            <i class="fa fa-book"></i> &nbsp;
-          </a>
-        </li>
+
       </ul>
     </div>
   </div>
 </div>
-
+<!-- 
+<style>
+  header .navbar.navbar-static-top.navbar-inverse{
+    border: 1px solid rgba(0,0,0,.125);
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+  }
+  body{
+    background: #eef5f9;
+    font-family: "Poppins", sans-serif;
+}
+.left-menu{
+  background: #fff;
+  height: auto;
+  float: left;
+  border: 1px solid rgba(0,0,0,.125);
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+}
+.left-menu li {
+  width: 100%;
+}
+div#app{
+  width: 100%;
+}
+#content{
+  margin: 0;
+  padding: 0 5px;
+}
+.panel{
+  border: 1px solid rgba(0,0,0,.125);
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+}
+#options{
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
+}
+#options .panel{
+  border: none;
+  box-shadow: none;
+}
+.navbar-nav > li > a{
+  color: #607d8b;
+}
+.dropdown-menu > li > a{
+  color: #607d8b;
+}
+.navbar-inverse .navbar-nav > li > a{
+  color: #607d8b;
+}
+tr.reactable-column-header{
+  color: #666;
+}
+.tab-content h2{
+  color: #666;
+}
+.tab-content h3{
+  color: #666;
+}
+table th , table th a{
+  color: #666
+}
+</style> -->
