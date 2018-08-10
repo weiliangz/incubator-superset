@@ -13,14 +13,14 @@
 
     {% block uncontained %}{% endblock %}
     <div class="row" id= "content" >
-      <div class="col-lg-3">
+        <div class="col-lg-3 test">
         <div class="left-menu">
             <ul class="nav navbar-nav">
                 {% include 'appbuilder/navbar_menu.html' %}
             </ul>
         </div>
       </div>
-      <div class="col-lg-8" style="margin: 0 2%">
+      <div class="col-lg-8 content-center-margin">
             {% block messages %}
                 {% include 'superset/flash_wrapper.html' %}
             {% endblock %}
@@ -42,6 +42,19 @@
               </div>
           </div>
         </footer>
+        <script>
+                $(document).ready(function() {
+                  $("#toggle").on("click",function(){
+                    $("#content .col-lg-3").toggleClass("test");
+                    $("#content .col-lg-8").toggleClass("content-center-margin");
+                    $("#toggle").toggleClass("glyphicon-menu-hamburger")
+                  });
+              });
+        </script>
+
+<script>
+
+</script>
     {% endblock %}
 {% endblock %}
 

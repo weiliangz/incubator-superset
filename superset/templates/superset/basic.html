@@ -40,14 +40,14 @@
       {% endif %}
     {% endblock %}
     <div class="row" id= "content" >
-      <div class="col-lg-3">
+      <div class="col-lg-3 test">
         <div class="left-menu">
             <ul class="nav navbar-nav">
                 {% include 'appbuilder/navbar_menu.html' %}
             </ul>
         </div>
       </div>
-      <div class="col-lg-8">
+      <div class="col-lg-8 content-center">
           {% block body %}
           <div id="app" data-bootstrap="{{ bootstrap_data }}"  >
             <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
@@ -78,7 +78,17 @@
     {% block tail_js %}
       {% if entry %}
         <script src="{{ js_manifest(entry + '.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+              $("#toggle").on("click",function(){
+                $("#content .col-lg-3").toggleClass("test");
+                $("#content .col-lg-8").toggleClass("content-center");
+                $("#toggle").toggleClass("glyphicon-menu-hamburger")
+              });
+          });
+          </script>
       {% endif %}
+
     {% endblock %}
   </body>
 </html>
