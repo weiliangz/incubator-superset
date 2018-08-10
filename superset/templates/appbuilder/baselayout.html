@@ -13,7 +13,7 @@
 
     {% block uncontained %}{% endblock %}
     <div class="row" id= "content" >
-        <div class="col-lg-3 test">
+        <div class="col-lg-2 test" id="button-animation">
         <div class="left-menu">
             <ul class="nav navbar-nav">
                 {% include 'appbuilder/navbar_menu.html' %}
@@ -44,8 +44,8 @@
         </footer>
         <script>
                 $(document).ready(function() {
-                  $("#toggle").on("click",function(){
-                    $("#content .col-lg-3").toggleClass("test");
+                  $("#toggle").click(function() {
+                    $("#button-animation").toggleClass("test");
                     $("#content .col-lg-8").toggleClass("content-center-margin");
                     $("#toggle").toggleClass("glyphicon-menu-hamburger")
                   });
