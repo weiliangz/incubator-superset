@@ -1,5 +1,13 @@
 {% block tail_js %}
-  <script
-    src="{{ js_manifest(filename + '.js') }}">
-  </script>
+<script src="{{ js_manifest(filename + '.js') }}">
+</script>
+<script>
+  $(document).ready(function () {
+    $("#toggle").click(function() {
+      $("#button-animation").toggleClass("test");
+      $("#content .col-lg-8").toggleClass("content-center");
+      $("#toggle").toggleClass("glyphicon-menu-hamburger")
+    });
+  });
+</script> 
 {% endblock %}

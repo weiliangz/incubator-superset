@@ -153,6 +153,33 @@ export const visTypes = {
     },
   },
 
+  power_bi: {
+    label: t('Power BI Chart'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('AcessToken'),
+        expanded: true,
+        controlSetRows: [
+          ['metric'],
+          ['adhoc_filters'],
+          ['groupby'],
+          ['limit'],
+        ],
+      },
+      {
+        label: t('Chart Options'),
+        expanded: true,
+        controlSetRows: [
+          ['pie_label_type'],
+          ['donut', 'show_legend'],
+          ['labels_outside'],
+          ['color_scheme'],
+        ],
+      },
+    ],
+  },
+
   pie: {
     label: t('Pie Chart'),
     showOnExplore: true,

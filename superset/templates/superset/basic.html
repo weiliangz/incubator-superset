@@ -1,4 +1,4 @@
-{% import 'appbuilder/general/lib.html' as lib %}
+{% set menu = appbuilder.menu %} {% set languages = appbuilder.languages %}{% import 'appbuilder/general/lib.html' as lib %}
 <html>
   <head>
     <title>
@@ -39,12 +39,23 @@
         </header>
       {% endif %}
     {% endblock %}
-
-    {% block body %}
-      <div id="app" data-bootstrap="{{ bootstrap_data }}" >
-        <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
+    <div class="row" id= "content" >
+        <div class="col-lg-2 test" id="button-animation">
+        <div class="left-menu">
+            <ul class="nav navbar-nav">
+                {% include 'appbuilder/navbar_menu.html' %}
+            </ul>
+        </div>
       </div>
-    {% endblock %}
+      <div class="col-lg-8 content-center">
+          {% block body %}
+          <div id="app" data-bootstrap="{{ bootstrap_data }}"  >
+            <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
+          </div>
+        {% endblock %}
+      </div>
+    </div>
+    
 
     <!-- Modal for misc messages / alerts  -->
     <div class="misc-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -67,7 +78,17 @@
     {% block tail_js %}
       {% if entry %}
         <script src="{{ js_manifest(entry + '.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+              $("#toggle").click(function() {
+                $("#button-animation").toggleClass("test");
+                $("#content .col-lg-8").toggleClass("content-center");
+                $("#toggle").toggleClass("glyphicon-menu-hamburger")
+              });
+          });
+          </script>
       {% endif %}
+
     {% endblock %}
   </body>
 </html>
