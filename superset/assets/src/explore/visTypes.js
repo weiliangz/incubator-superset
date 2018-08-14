@@ -1802,7 +1802,9 @@ export const visTypes = {
       {
         label: t('Options'),
         controlSetRows: [
-          ['url'],
+          ['embed_powerbi_token'],
+          ['embed_powerbi_url'],
+          ['embed_powerbi_report_id'],
         ],
       },
     ],
