@@ -1795,6 +1795,18 @@ export const visTypes = {
       sections.NVD3TimeSeries[1],
     ],
   },
+
+  embedded_powerbi: {
+    label: t('Embedded PowerBI'),
+    controlPanelSections: [
+      {
+        label: t('Options'),
+        controlSetRows: [
+          ['url'],
+        ],
+      },
+    ],
+  },
 };
 
 export default visTypes;
