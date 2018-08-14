@@ -3,7 +3,7 @@
  *
  * While the React components located in `controls/components` represent different
  * types of controls (CheckboxControl, SelectControl, TextControl, ...), the controls here
- * represent instances of control types, that can be reused across visualisation types.
+ * represent instances of control types, that can be reused across visualization types.
  *
  * When controls are reused across viz types, their values are carried over as a user
  * changes the chart types.
@@ -191,8 +191,9 @@ export const controls = {
     label: t('Datasource'),
     default: null,
     description: null,
-    mapStateToProps: state => ({
+    mapStateToProps: (state, control, actions) => ({
       datasource: state.datasource,
+      onDatasourceSave: actions ? actions.setDatasource : () => {},
     }),
   },
 
@@ -206,6 +207,7 @@ export const controls = {
   percent_metrics: {
     ...metrics,
     multi: true,
+    default: [],
     label: t('Percentage Metrics'),
     validators: [],
     description: t('Metrics for which percentage of total are to be displayed'),
@@ -511,6 +513,7 @@ export const controls = {
       'Egypt',
       'France',
       'Germany',
+      'India',
       'Italy',
       'Portugal',
       'Morocco',
@@ -518,9 +521,11 @@ export const controls = {
       'Russia',
       'Singapore',
       'Spain',
+      'Thailand',
       'Uk',
       'Ukraine',
       'Usa',
+      'Zambia',
     ].map(s => [s, s]),
     description: t('The name of country that Superset should display'),
   },
@@ -765,6 +770,8 @@ export const controls = {
       ['week_starting_sunday', 'week starting Sunday'],
       ['week_ending_saturday', 'week ending Saturday'],
       ['P1M', 'month'],
+      ['P3M', 'quarter'],
+      ['P1Y', 'year'],
     ],
     description: t('The time granularity for the visualization. Note that you ' +
     'can type and use simple natural language as in `10 seconds`, ' +
@@ -825,22 +832,23 @@ export const controls = {
     'column in the table. Also note that the ' +
     'filter below is applied against this column or ' +
     'expression'),
-    default: (c) => {
-      if (c.options && c.options.length > 0) {
-        return c.options[0].column_name;
-      }
-      return null;
-    },
+    default: control => control.default,
     clearable: false,
     optionRenderer: c => <ColumnOption column={c} showType />,
     valueRenderer: c => <ColumnOption column={c} />,
     valueKey: 'column_name',
     mapStateToProps: (state) => {
-      const newState = {};
+      const props = {};
       if (state.datasource) {
-        newState.options = state.datasource.columns.filter(c => c.is_dttm);
+        props.options = state.datasource.columns.filter(c => c.is_dttm);
+        props.default = null;
+        if (state.datasource.main_dttm_col) {
+          props.default = state.datasource.main_dttm_col;
+        } else if (props.options && props.options.length > 0) {
+          props.default = props.options[0].column_name;
+        }
       }
-      return newState;
+      return props;
     },
   },
 
@@ -861,7 +869,7 @@ export const controls = {
   resample_rule: {
     type: 'SelectControl',
     freeForm: true,
-    label: t('Resample Rule'),
+    label: t('Rule'),
     default: null,
     choices: formatSelectOptions(['', '1T', '1H', '1D', '7D', '1M', '1AS']),
     description: t('Pandas resample rule'),
@@ -870,7 +878,7 @@ export const controls = {
   resample_how: {
     type: 'SelectControl',
     freeForm: true,
-    label: t('Resample How'),
+    label: t('How'),
     default: null,
     choices: formatSelectOptions(['', 'mean', 'sum', 'median']),
     description: t('Pandas resample how'),
@@ -879,24 +887,17 @@ export const controls = {
   resample_fillmethod: {
     type: 'SelectControl',
     freeForm: true,
-    label: t('Resample Fill Method'),
+    label: t('Fill Method'),
     default: null,
     choices: formatSelectOptions(['', 'ffill', 'bfill']),
     description: t('Pandas resample fill method'),
   },
 
-  since: {
+  time_range: {
     type: 'DateFilterControl',
     freeForm: true,
-    label: t('Since'),
-    default: t('7 days ago'),
-  },
-
-  until: {
-    type: 'DateFilterControl',
-    freeForm: true,
-    label: t('Until'),
-    default: 'now',
+    label: t('Time range'),
+    default: t('Last week'),
   },
 
   max_bubble_size: {
@@ -1132,34 +1133,6 @@ export const controls = {
     default: '',
   },
 
-  where: {
-    type: 'TextAreaControl',
-    label: t('Custom WHERE clause'),
-    default: '',
-    language: 'sql',
-    minLines: 2,
-    maxLines: 10,
-    offerEditInModal: false,
-    description: t('The text in this box gets included in your query\'s WHERE ' +
-    'clause, as an AND to other criteria. You can include ' +
-    'complex expression, parenthesis and anything else ' +
-    'supported by the backend it is directed towards.'),
-  },
-
-  having: {
-    type: 'TextAreaControl',
-    label: t('Custom HAVING clause'),
-    default: '',
-    language: 'sql',
-    minLines: 2,
-    maxLines: 10,
-    offerEditInModal: false,
-    description: t('The text in this box gets included in your query\'s HAVING ' +
-    'clause, as an AND to other criteria. You can include ' +
-    'complex expression, parenthesis and anything else ' +
-    'supported by the backend it is directed towards.'),
-  },
-
   compare_lag: {
     type: 'TextControl',
     label: t('Comparison Period Lag'),
@@ -1235,11 +1208,12 @@ export const controls = {
     mapStateToProps: (state) => {
       const showWarning = (
           state.controls &&
-          state.controls.num_period_compare &&
-          state.controls.num_period_compare.value !== '');
+          state.controls.comparison_type &&
+          state.controls.comparison_type.value === 'percentage');
       return {
         warning: showWarning ?
-          t('When `Period Ratio` is set, the Y Axis Format is forced to `.1%`') : null,
+          t('When `Calculation type` is set to "Percentage change", the Y ' +
+            'Axis Format is forced to `.1%`') : null,
         disabled: showWarning,
       };
     },
@@ -1474,6 +1448,16 @@ export const controls = {
     description: t('Whether to display the legend (toggles)'),
   },
 
+  show_labels: {
+    type: 'CheckboxControl',
+    label: t('Show Labels'),
+    renderTrigger: true,
+    default: true,
+    description: t(
+      'Whether to display the labels. Note that the label only displays when the the 5% ' +
+      'threshold.'),
+  },
+
   show_values: {
     type: 'CheckboxControl',
     label: t('Show Values'),
@@ -1488,6 +1472,22 @@ export const controls = {
     renderTrigger: true,
     default: true,
     description: t('Whether to display the metric name as a title'),
+  },
+
+  show_trend_line: {
+    type: 'CheckboxControl',
+    label: t('Show Trend Line'),
+    renderTrigger: true,
+    default: true,
+    description: t('Whether to display the trend line'),
+  },
+
+  start_y_axis_at_zero: {
+    type: 'CheckboxControl',
+    label: t('Start y-axis at 0'),
+    renderTrigger: true,
+    default: true,
+    description: t('Start y-axis at zero. Uncheck to start y-axis at minimum value in the data.'),
   },
 
   x_axis_showminmax: {
@@ -1510,7 +1510,7 @@ export const controls = {
     type: 'CheckboxControl',
     label: t('Rich Tooltip'),
     renderTrigger: true,
-    default: false,
+    default: true,
     description: t('The rich tooltip shows a list of all series for that ' +
     'point in time'),
   },
@@ -1562,41 +1562,38 @@ export const controls = {
     description: t('Compute the contribution to the total'),
   },
 
-  num_period_compare: {
-    type: 'TextControl',
-    label: t('Period Ratio'),
-    default: '',
-    isInt: true,
-    description: t('[integer] Number of period to compare against, ' +
-    'this is relative to the granularity selected'),
-  },
-
-  period_ratio_type: {
-    type: 'SelectControl',
-    label: t('Period Ratio Type'),
-    default: 'growth',
-    choices: formatSelectOptions(['factor', 'growth', 'value']),
-    description: t('`factor` means (new/previous), `growth` is ' +
-    '((new/previous) - 1), `value` is (new-previous)'),
-  },
-
   time_compare: {
     type: 'SelectControl',
     multi: true,
     freeForm: true,
     label: t('Time Shift'),
-    default: [],
     choices: formatSelectOptions([
       '1 day',
       '1 week',
       '28 days',
       '30 days',
+      '52 weeks',
       '1 year',
     ]),
     description: t('Overlay one or more timeseries from a ' +
     'relative time period. Expects relative time deltas ' +
     'in natural language (example:  24 hours, 7 days, ' +
     '56 weeks, 365 days)'),
+  },
+
+  comparison_type: {
+    type: 'SelectControl',
+    label: t('Calculation type'),
+    default: 'values',
+    choices: [
+      ['values', 'Actual Values'],
+      ['absolute', 'Absolute difference'],
+      ['percentage', 'Percentage change'],
+      ['ratio', 'Ratio'],
+    ],
+    description: t('How to display time shifts: as individual lines; as the ' +
+    'absolute difference between the main time series and each time shift; ' +
+    'as the percentage change; or as the ratio between series and time shifts.'),
   },
 
   subheader: {
@@ -1822,16 +1819,6 @@ export const controls = {
     description: t('Labels for the marker lines'),
   },
 
-  filters: {
-    type: 'FilterControl',
-    label: '',
-    default: [],
-    description: '',
-    mapStateToProps: state => ({
-      datasource: state.datasource,
-    }),
-  },
-
   annotation_layers: {
     type: 'AnnotationLayerControl',
     label: '',
@@ -1852,18 +1839,6 @@ export const controls = {
       datasource: state.datasource,
     }),
     provideFormDataToProps: true,
-  },
-
-  having_filters: {
-    type: 'FilterControl',
-    label: '',
-    default: [],
-    description: '',
-    mapStateToProps: state => ({
-      choices: (state.datasource) ? state.datasource.metrics_combo
-        .concat(state.datasource.filterable_cols) : [],
-      datasource: state.datasource,
-    }),
   },
 
   slice_id: {
@@ -2201,27 +2176,6 @@ export const controls = {
     renderTrigger: true,
     description: t('Whether to normalize the histogram'),
     default: false,
-  },
-
-  embed_powerbi_token: {
-    type: 'TextControl',
-    label: t('Embed Token'),
-    description: t('Embed Token'),
-    default: 'H4sIAAAAAAAEAB2WxQ7sWA5A_-Vt01KwAi31IsycVGAXZuaM5t-npu_aurKO7WP_54-VPP2U5H_-_hOxCb4oKH4zjL2JfcrCNdSt7rDhn2nqHf3DuSd_1LyT8XndBa67CR4rbXYJ3PH6xYEH7nKlq2PoOepiuSt8fHJyX1KQoQsRUutyWSh9ePVxkl-ypblRuz7Ybj9AUm9U0AIutGXDxo3hspgFXBGcnR6g69NxOH4QsAHR8mjQrKCwl3hLrRXtTys2rs-GJEpG1dPoKzSQ_hPVx9UipOo7-BlqvvN4I7Wt9-tgkZ_d9zvP2VNz8Og_34ZlQnCosKtiZRACGsPy0IIahZekwNiW_GKXzy_KmymZmTWJt9zwIAfYVcBHKsQAk29Wp7yziuK5Dkk8nAnZT9DBjfl3GMFZ9YBrUUGRH3YOlcMDkTYu8xpqsfhOz09qM7bMxOop4AWk-lGIzxk5v4ooKEDOlY9hGfyUlKRGxTWwNlsqqPA72JMBb3wcKJxXapj8dAYjknR2Y-Fe6ScrlzFX8zKmAchOIlNkVUX8dVT5Sqb982F57PXt4GonuyovI1zv4jEV1kAzpvkcF1JWLfvcCU13YH6WoJHrMmlPVCQZGeI-hJZdkwvh3VkTi90L7r77yYfSbVvnbDILohCEwp2TecJB7THgz45j0AKqmAVDivatlxsYZsiIwRURcboMdpaNFkKtD-V489eYsSDNkgk1tg2YYZhEleBgC8mpWU36xGHWBTaLx4QEFzf9AWSIAzVE5rL0l89XHe-ryF9B877pLS1XwLMr5Ji94BWNa4_KgySkunOYcUf1IpVHzqzq2W2TOuITAoK2i-GAfkVQXOwU--VPVqgdDMzVk4eqCmh2joA-uFoHIZYaDHYoFM2zjGVa-XAkVu5EHhNb0zSy3DvuGaleBVj2IvuxyhoWTTUYWRDBKAmUlai2ZSq96AMwq2RHLuOa3iiBEsIL8tYHyasjq7TXnnfl7mbEV9zzKYmpmfeZzemLZbeHPl3ZneHhJcFOnWWO8LSmETivOE9Y3nROqijeCnVTIO9RBVg7DTpvq7wxqG_WX92Hyz8f-5vOciPAR1LTSEyaXVnd6Plu8dXyGEBB19VrR42lT5kG7UMXEaPO9T0LzcD19nXnd6MtThHnhFWdrkgjyk3dqPlQpuIoUySKFgxGMFW0UgYwQWFczPmtAVh5xRbqSCgrkmptwptOSyVnv94bYzELSZBdaGB3itKYTJqUeDiUd8flG7-CzkJ552yfbSJhUiWsHURknJZsYVysKrsbJFRIfEPUZzTMpAPjEV_pVdEo11HRfwKykUEPg-zL1bOO_bXf8aWpJhHLobBJVI7MdhA8P26OICtZ_VcYFa44QxDjZgDxaaZXuluhKo1CTH9STnLKWchPhLGEknqy5sMPCxPyrCMknV9trEu6WVRZLCCJi_NECRMwxFWEXeFyala7mJiodsuaY67WQz7hRKrFO-1I-YtbY-HM8g4lKFRlU2Z2na5tvLrdjxl6QXnrfVtuTkO8J1765ioAeh3xekXW10n7pTetr4YEF6IVG0qlLW44I3sBrr0K8PblBJvxmaNeaZPUalq7mWcQDjkL9C9U7Z72zt5CQhhI5F4YYi4wm6DtC0qbysL7fNyfuYC5CQ6pAInDK16VqhvaXOmsKjX16rjbcB0QPhh8pD_lE-mz1HFdBvpQJunBNjKd1Upmym38MITPFAtK2hZF-PQ-cQNA2-nup4IeNFPqTcYvGQCGb2qtGAp_Uw-gT3ucQfsArdLuxUNO6cX1G9v4OthpVoHCEtZuX2F5EpSHUffdH2KeKzqFaGjd88-wJ-1Z870Vjd8BKGqRKVhgQcmqulUCm1O5E9fhcAKObX4yf_aOxStizDvtUtuTPkS2SsTNmvmgZZ08CVTK2DNNBJE1pVhT8qYsvThJGJYXV5u1kIoMwQNl4EvBPaNTkRXunK_2m0DWWexKxNCBPhjO5Nxtb_gdPSzboL22Oys1eDuvCuot7dDzCV-q6c7BUVrMrSWoYbM_ET_lBfTnh-Ly9Y3Tmg4vcdDDXME-SLwkC-Xaxu3O7eJC9rhpeCbthwxI28aTpH1ZxRcGzejsvwAIwChelA1P9HhKo3ABsXHGJnrX2shwMJeg4XTYNB_kPF2c7cFTFQtF3D7QLlpOk3JQ9s-fv_6w6zPvk1o8v9NBTKkSy6QmDp7xp8PSby39ePA0QUBiLT_68i3Yw3AvC9mfIrc0uvitWJ1QmcMGZ_Nydw8o3TO9O87jaB78TcrlaH4V2JUAwK4gALkhe6xKRcU944lO-YVilo-Y4nrhAvw0POyHe3tYHLfPHALSA_y8tcffpLMF7A1MoCzUGKbPLo9nt7g8fBIEX-Wo2-fHNNNp1JXQW49cNaVCK48-b8A07Q77RvW5N77vupQ1s_aMVxWqEw2OLl9X7Rk-0RKBel464doUihaKKD4r0hgMJS9kBMaZw6gFaWuwoA3wdqNpYw4lKn0Tk_CtS07tWVReBdMtW_k9yflCkOsg_HBaogJvXp3-51_Mz1wXq_z9UbZ6uktUHD-GxF029dlOoCeqf6PcphqT_ViLX5iEdz7XDIZ4FFOgjtD7xB_uoQr-rc7YdREutcrTEBLxNL59CyDF71sbLdKOOOFbs1TTUL6f07xqG16rZLwTcucPaH3e8JFvUA2LOJpOaeunCBJwgSgw6KpbYdc6h4RdqJT0Xl6cHUyw-gcz0XxRlAtLTvtFuZprc961dWxuwXIySK25uec9rwwAV_wRAJ_6M-zffvtCTnXQObaQYY5pyRcBL_uGnwcshd_TfUKqofuhUmee1pCWl7NY9iGN0bMvclUTUSaeEYdC0_RkJ_EShIcaACpclMTaDlXx1AMF1_x0f4INXICgIK-zR24FMVP9zUw0CIqqU9M9_RZtu0vmRkzY_zH_93-NdESnLgsAAA==',
-  },
-
-  embed_powerbi_url: {
-    type: 'TextControl',
-    label: t('Embed URL'),
-    description: t('Embed URL'),
-    default: 'https://app.powerbi.com/reportEmbed?reportId=8a5b15cc-e026-4d5d-94c0-db5091d65614&groupId=be8908da-da25-452e-b220-163f52476cdd',
-  },
-
-  embed_powerbi_report_id: {
-    type: 'TextControl',
-    label: t('Report ID'),
-    description: t('Report ID'),
-    default: '8a5b15cc-e026-4d5d-94c0-db5091d65614',
   },
 };
 export default controls;

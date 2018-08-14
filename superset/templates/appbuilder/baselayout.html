@@ -1,6 +1,6 @@
 {% extends 'appbuilder/init.html' %}
 {% import 'appbuilder/baselib.html' as baselib %}
-{% set menu = appbuilder.menu %}
+
 {% block body %}
     {% include 'appbuilder/general/confirm.html' %}
     {% include 'appbuilder/general/alert.html' %}
@@ -12,23 +12,16 @@
     {% endblock %}
 
     {% block uncontained %}{% endblock %}
-    <div class="row" id= "content" >
-        <div class="col-lg-2 test" id="button-animation">
-        <div class="left-menu">
-            <ul class="nav navbar-nav">
-                {% include 'appbuilder/navbar_menu.html' %}
-            </ul>
-        </div>
-      </div>
-      <div class="col-lg-8 content-center-margin">
-            {% block messages %}
-                {% include 'superset/flash_wrapper.html' %}
-            {% endblock %}
-            {% block content %}
-            {% endblock %}
+
+    <div class="container">
+      <div class="row">
+          {% block messages %}
+            {% include 'superset/flash_wrapper.html' %}
+          {% endblock %}
+          {% block content %}
+          {% endblock %}
       </div>
     </div>
-
     <div class="container-fluid">
         {% block content_fluid %}
         {% endblock %}
@@ -42,19 +35,6 @@
               </div>
           </div>
         </footer>
-        <script>
-                $(document).ready(function() {
-                  $("#toggle").click(function() {
-                    $("#button-animation").toggleClass("test");
-                    $("#content .col-lg-8").toggleClass("content-center-margin");
-                    $("#toggle").toggleClass("glyphicon-menu-hamburger")
-                  });
-              });
-        </script>
-
-<script>
-
-</script>
     {% endblock %}
 {% endblock %}
 
