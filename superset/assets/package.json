@@ -82,6 +82,7 @@
     "object.values": "^1.0.4",
     "parse-iso-duration": "^1.0.0",
     "po2json": "^0.4.5",
+    "powerbi-client": "^2.6.1",
     "prop-types": "^15.6.0",
     "react": "^15.6.2",
     "react-ace": "^5.0.1",

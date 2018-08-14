@@ -17,6 +17,7 @@ export const VIZ_TYPES = {
   chord: 'chord',
   dist_bar: 'dist_bar',
   filter_box: 'filter_box',
+  power_bi : 'power_bi',
   heatmap: 'heatmap',
   histogram: 'histogram',
   horizon: 'horizon',

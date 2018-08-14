@@ -158,7 +158,7 @@ export const visTypes = {
     showOnExplore: true,
     controlPanelSections: [
       {
-        label: t('Query'),
+        label: t('AcessToken'),
         expanded: true,
         controlSetRows: [
           ['metric'],
