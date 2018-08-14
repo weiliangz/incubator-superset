@@ -1820,6 +1820,21 @@ class IFrameViz(BaseViz):
     def get_df(self, query_obj=None):
         return None
 
+class EmbeddedPowerBIViz(BaseViz):
+
+    """Embedded PowerBI"""
+
+    viz_type = 'embedded_powerbi'
+    verbose_name = _('Embedded PowerBI')
+    credits = 'a <a href="http://savvyplus.com.au/">SavvyPlus</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
+
 
 class ParallelCoordinatesViz(BaseViz):
 
