@@ -161,22 +161,26 @@ export const visTypes = {
         label: t('AcessToken'),
         expanded: true,
         controlSetRows: [
-          ['metric'],
-          ['adhoc_filters'],
-          ['groupby'],
-          ['limit'],
+          ['token'],
         ],
       },
+
       {
-        label: t('Chart Options'),
+        label: t('Report ID'),
         expanded: true,
         controlSetRows: [
-          ['pie_label_type'],
-          ['donut', 'show_legend'],
-          ['labels_outside'],
-          ['color_scheme'],
+          ['report_id'],
         ],
       },
+
+      {
+        label: t('Embed URL'),
+        expanded: true,
+        controlSetRows: [
+          ['embed_url'],
+        ],
+      },
+
     ],
   },
 

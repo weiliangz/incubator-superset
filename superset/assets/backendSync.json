@@ -1671,6 +1671,28 @@
       "description": "The URL, this control is templated, so you can integrate {{ width }} and/or {{ height }} in your URL string.",
       "default": "https://www.youtube.com/embed/AdSZJzb-aX8"
     },
+
+    "token": {
+      "type": "TextControl",
+      "label": "Access Token",
+      "description": "Acess Token require",
+      "default": ""
+    },
+
+    "report_id": {
+      "type": "TextControl",
+      "label": "Report ID",
+      "description": "Report ID require",
+      "default": ""
+    },
+
+    "embed_url": {
+      "type": "TextControl",
+      "label": "Embed Url",
+      "description": "Embed Url require",
+      "default": ""
+    },
+
     "x_axis_label": {
       "type": "TextControl",
       "label": "X Axis Label",
