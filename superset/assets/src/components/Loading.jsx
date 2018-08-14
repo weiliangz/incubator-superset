@@ -5,28 +5,24 @@ const propTypes = {
   size: PropTypes.number,
 };
 const defaultProps = {
-  size: 50,
+  size: 25,
 };
 
-export default function Loading({ size }) {
+export default function Loading(props) {
   return (
     <img
       className="loading"
       alt="Loading..."
       src="/static/assets/images/loading.gif"
       style={{
-        width: Math.min(size, 50),
-        // height is auto
+        width: props.size,
+        height: props.size,
         padding: 0,
         margin: 0,
         position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
       }}
     />
   );
 }
-
 Loading.propTypes = propTypes;
 Loading.defaultProps = defaultProps;

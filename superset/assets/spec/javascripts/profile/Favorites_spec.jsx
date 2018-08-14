@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import { user } from './fixtures';
 import Favorites from '../../../src/profile/components/Favorites';
-import TableLoader from '../../../src/components/TableLoader';
+import TableLoader from '../../../src/profile/components/TableLoader';
 
 describe('Favorites', () => {
   const mockedProps = {

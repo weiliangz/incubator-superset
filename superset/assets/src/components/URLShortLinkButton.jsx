@@ -4,23 +4,19 @@ import { Popover, OverlayTrigger } from 'react-bootstrap';
 import CopyToClipboard from './CopyToClipboard';
 import { getShortUrl } from '../utils/common';
 import { t } from '../locales';
-import withToasts from '../messageToasts/enhancers/withToasts';
 
 const propTypes = {
   url: PropTypes.string,
   emailSubject: PropTypes.string,
   emailContent: PropTypes.string,
-  addDangerToast: PropTypes.func.isRequired,
 };
 
-class URLShortLinkButton extends React.Component {
+export default class URLShortLinkButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       shortUrl: '',
     };
-    this.onShortUrlSuccess = this.onShortUrlSuccess.bind(this);
-    this.getCopyUrl = this.getCopyUrl.bind(this);
   }
 
   onShortUrlSuccess(data) {
@@ -30,7 +26,7 @@ class URLShortLinkButton extends React.Component {
   }
 
   getCopyUrl() {
-    getShortUrl(this.props.url, this.onShortUrlSuccess, this.props.addDangerToast);
+    getShortUrl(this.props.url, this.onShortUrlSuccess.bind(this));
   }
 
   renderPopover() {
@@ -55,7 +51,7 @@ class URLShortLinkButton extends React.Component {
         trigger="click"
         rootClose
         placement="left"
-        onEnter={this.getCopyUrl}
+        onEnter={this.getCopyUrl.bind(this)}
         overlay={this.renderPopover()}
       >
         <span className="btn btn-default btn-sm">
@@ -73,5 +69,3 @@ URLShortLinkButton.defaultProps = {
 };
 
 URLShortLinkButton.propTypes = propTypes;
-
-export default withToasts(URLShortLinkButton);

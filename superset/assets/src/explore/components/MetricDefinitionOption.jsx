@@ -7,7 +7,6 @@ import AggregateOption from './AggregateOption';
 import columnType from '../propTypes/columnType';
 import savedMetricType from '../propTypes/savedMetricType';
 import aggregateOptionType from '../propTypes/aggregateOptionType';
-import withToasts from '../../messageToasts/enhancers/withToasts';
 
 const propTypes = {
   option: PropTypes.oneOfType([
@@ -15,10 +14,9 @@ const propTypes = {
     savedMetricType,
     aggregateOptionType,
   ]).isRequired,
-  addWarningToast: PropTypes.func.isRequired,
 };
 
-function MetricDefinitionOption({ option, addWarningToast }) {
+export default function MetricDefinitionOption({ option }) {
   if (option.metric_name) {
     return (
       <MetricOption metric={option} showType />
@@ -32,10 +30,7 @@ function MetricDefinitionOption({ option, addWarningToast }) {
       <AggregateOption aggregate={option} showType />
     );
   }
-  addWarningToast('You must supply either a saved metric, column or aggregate to MetricDefinitionOption');
+  notify.error('You must supply either a saved metric, column or aggregate to MetricDefinitionOption');
   return null;
 }
-
 MetricDefinitionOption.propTypes = propTypes;
-
-export default withToasts(MetricDefinitionOption);

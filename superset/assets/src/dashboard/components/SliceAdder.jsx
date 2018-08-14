@@ -1,256 +1,219 @@
-/* eslint-env browser */
 import React from 'react';
+import $ from 'jquery';
 import PropTypes from 'prop-types';
-import { DropdownButton, MenuItem } from 'react-bootstrap';
-import { CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
-import SearchInput, { createFilter } from 'react-search-input';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
-import AddSliceCard from './AddSliceCard';
-import AddSliceDragPreview from './dnd/AddSliceDragPreview';
-import DragDroppable from './dnd/DragDroppable';
-import Loading from '../../components/Loading';
-import { CHART_TYPE, NEW_COMPONENT_SOURCE_TYPE } from '../util/componentTypes';
-import { NEW_CHART_ID, NEW_COMPONENTS_SOURCE_ID } from '../util/constants';
-import { slicePropShape } from '../util/propShapes';
+import ModalTrigger from '../../components/ModalTrigger';
 import { t } from '../../locales';
 
+require('react-bootstrap-table/css/react-bootstrap-table.css');
+
 const propTypes = {
-  fetchAllSlices: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  slices: PropTypes.objectOf(slicePropShape).isRequired,
-  lastUpdated: PropTypes.number.isRequired,
-  errorMessage: PropTypes.string,
+  dashboard: PropTypes.object.isRequired,
+  triggerNode: PropTypes.node.isRequired,
   userId: PropTypes.string.isRequired,
-  selectedSliceIds: PropTypes.arrayOf(PropTypes.number).isRequired,
-  editMode: PropTypes.bool,
-  height: PropTypes.number,
+  addSlicesToDashboard: PropTypes.func,
 };
-
-const defaultProps = {
-  selectedSliceIds: [],
-  editMode: false,
-  errorMessage: '',
-  height: window.innerHeight,
-};
-
-const KEYS_TO_FILTERS = ['slice_name', 'viz_type', 'datasource_name'];
-const KEYS_TO_SORT = [
-  { key: 'slice_name', label: 'Name' },
-  { key: 'viz_type', label: 'Vis type' },
-  { key: 'datasource_name', label: 'Datasource' },
-  { key: 'changed_on', label: 'Recent' },
-];
-
-const MARGIN_BOTTOM = 16;
-const SIDEPANE_HEADER_HEIGHT = 55;
-const SLICE_ADDER_CONTROL_HEIGHT = 64;
-const DEFAULT_CELL_HEIGHT = 136;
-
-const cache = new CellMeasurerCache({
-  defaultHeight: DEFAULT_CELL_HEIGHT,
-  fixedWidth: true,
-});
 
 class SliceAdder extends React.Component {
-  static sortByComparator(attr) {
-    const desc = attr === 'changed_on' ? -1 : 1;
-
-    return (a, b) => {
-      if (a[attr] < b[attr]) {
-        return -1 * desc;
-      } else if (a[attr] > b[attr]) {
-        return 1 * desc;
-      }
-      return 0;
-    };
-  }
-
   constructor(props) {
     super(props);
     this.state = {
-      filteredSlices: [],
-      searchTerm: '',
-      sortBy: KEYS_TO_SORT.findIndex(item => item.key === 'changed_on'),
-      selectedSliceIdsSet: new Set(props.selectedSliceIds),
+      slices: [],
+      slicesLoaded: false,
+      selectionMap: {},
     };
 
-    this.rowRenderer = this.rowRenderer.bind(this);
-    this.searchUpdated = this.searchUpdated.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
-  }
+    this.options = {
+      defaultSortOrder: 'desc',
+      defaultSortName: 'modified',
+      sizePerPage: 10,
+    };
 
-  componentDidMount() {
-    this.slicesRequest = this.props.fetchAllSlices(this.props.userId);
-  }
+    this.addSlices = this.addSlices.bind(this);
+    this.toggleSlice = this.toggleSlice.bind(this);
 
-  componentWillReceiveProps(nextProps) {
-    const nextState = {};
-    if (nextProps.lastUpdated !== this.props.lastUpdated) {
-      nextState.filteredSlices = Object.values(nextProps.slices)
-        .filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
-        .sort(SliceAdder.sortByComparator(KEYS_TO_SORT[this.state.sortBy].key));
-    }
-
-    if (nextProps.selectedSliceIds !== this.props.selectedSliceIds) {
-      nextState.selectedSliceIdsSet = new Set(nextProps.selectedSliceIds);
-    }
-
-    if (Object.keys(nextState).length) {
-      this.setState(nextState);
-    }
+    this.selectRowProp = {
+      mode: 'checkbox',
+      clickToSelect: true,
+      onSelect: this.toggleSlice,
+    };
   }
 
   componentWillUnmount() {
-    if (this.slicesRequest && this.slicesRequest.abort) {
+    if (this.slicesRequest) {
       this.slicesRequest.abort();
     }
   }
 
-  getFilteredSortedSlices(searchTerm, sortBy) {
-    return Object.values(this.props.slices)
-      .filter(createFilter(searchTerm, KEYS_TO_FILTERS))
-      .sort(SliceAdder.sortByComparator(KEYS_TO_SORT[sortBy].key));
+  onEnterModal() {
+    const uri = `/sliceaddview/api/read?_flt_0_created_by=${this.props.userId}`;
+    this.slicesRequest = $.ajax({
+      url: uri,
+      type: 'GET',
+      success: (response) => {
+        // Prepare slice data for table
+        const slices = response.result.map(slice => ({
+          id: slice.id,
+          sliceName: slice.slice_name,
+          vizType: slice.viz_type,
+          datasourceLink: slice.datasource_link,
+          modified: slice.modified,
+        }));
+
+        this.setState({
+          slices,
+          selectionMap: {},
+          slicesLoaded: true,
+        });
+      },
+      error: (error) => {
+        this.errored = true;
+        this.setState({
+          errorMsg: t('Sorry, there was an error fetching charts to this dashboard: ') +
+          this.getAjaxErrorMsg(error),
+        });
+      },
+    });
   }
 
-  handleKeyPress(ev) {
-    if (ev.key === 'Enter') {
-      ev.preventDefault();
+  getAjaxErrorMsg(error) {
+    const respJSON = error.responseJSON;
+    return (respJSON && respJSON.message) ? respJSON.message :
+      error.responseText;
+  }
 
-      this.searchUpdated(ev.target.value);
+  addSlices() {
+    const adder = this;
+    this.props.addSlicesToDashboard(Object.keys(this.state.selectionMap))
+      // if successful, page will be reloaded.
+      .fail((error) => {
+        adder.errored = true;
+        adder.setState({
+          errorMsg: t('Sorry, there was an error adding charts to this dashboard: ') +
+          this.getAjaxErrorMsg(error),
+        });
+      });
+  }
+
+  toggleSlice(slice) {
+    const selectionMap = Object.assign({}, this.state.selectionMap);
+    selectionMap[slice.id] = !selectionMap[slice.id];
+    this.setState({ selectionMap });
+  }
+
+  modifiedDateComparator(a, b, order) {
+    if (order === 'desc') {
+      if (a.changed_on > b.changed_on) {
+        return -1;
+      } else if (a.changed_on < b.changed_on) {
+        return 1;
+      }
+      return 0;
     }
-  }
 
-  searchUpdated(searchTerm) {
-    this.setState({
-      searchTerm,
-      filteredSlices: this.getFilteredSortedSlices(
-        searchTerm,
-        this.state.sortBy,
-      ),
-    });
-  }
-
-  handleSelect(sortBy) {
-    this.setState({
-      sortBy,
-      filteredSlices: this.getFilteredSortedSlices(
-        this.state.searchTerm,
-        sortBy,
-      ),
-    });
-  }
-
-  rowRenderer({ key, index, style, parent }) {
-    const { filteredSlices, selectedSliceIdsSet } = this.state;
-    const cellData = filteredSlices[index];
-    const isSelected = selectedSliceIdsSet.has(cellData.slice_id);
-    const type = CHART_TYPE;
-    const id = NEW_CHART_ID;
-
-    const meta = {
-      chartId: cellData.slice_id,
-      sliceName: cellData.slice_name,
-    };
-
-    return (
-      <DragDroppable
-        key={key}
-        component={{ type, id, meta }}
-        parentComponent={{
-          id: NEW_COMPONENTS_SOURCE_ID,
-          type: NEW_COMPONENT_SOURCE_TYPE,
-        }}
-        index={index}
-        depth={0}
-        disableDragDrop={isSelected}
-        editMode={this.props.editMode}
-        // we must use a custom drag preview within the List because
-        // it does not seem to work within a fixed-position container
-        useEmptyDragPreview
-        // List library expect style props here
-        // actual style should be applied to nested AddSliceCard component
-        style={{}}
-      >
-        {({ dragSourceRef }) => (
-          <CellMeasurer
-            cache={cache}
-            columnIndex={0}
-            key={key}
-            parent={parent}
-            rowIndex={index}
-          >
-            <AddSliceCard
-              innerRef={dragSourceRef}
-              style={style}
-              sliceName={cellData.slice_name}
-              lastModified={cellData.modified}
-              visType={cellData.viz_type}
-              datasourceLink={cellData.datasource_link}
-              isSelected={isSelected}
-            />
-          </CellMeasurer>
-        )}
-      </DragDroppable>
-    );
+    if (a.changed_on < b.changed_on) {
+      return -1;
+    } else if (a.changed_on > b.changed_on) {
+      return 1;
+    }
+    return 0;
   }
 
   render() {
-    const slicesListHeight =
-      this.props.height -
-      SIDEPANE_HEADER_HEIGHT -
-      SLICE_ADDER_CONTROL_HEIGHT -
-      MARGIN_BOTTOM;
-    return (
-      <div className="slice-adder-container">
-        <div className="controls">
-          <SearchInput
-            placeholder={t('Filter your charts')}
-            className="search-input"
-            onChange={this.searchUpdated}
-            onKeyPress={this.handleKeyPress}
-          />
-
-          <DropdownButton
-            title={`Sort by ${KEYS_TO_SORT[this.state.sortBy].label}`}
-            onSelect={this.handleSelect}
-            id="slice-adder-sortby"
-          >
-            {KEYS_TO_SORT.map((item, index) => (
-              <MenuItem key={item.key} eventKey={index}>
-                Sort by {item.label}
-              </MenuItem>
-            ))}
-          </DropdownButton>
+    const hideLoad = this.state.slicesLoaded || this.errored;
+    let enableAddSlice = this.state.selectionMap && Object.keys(this.state.selectionMap);
+    if (enableAddSlice) {
+      enableAddSlice = enableAddSlice.some(function (key) {
+        return this.state.selectionMap[key];
+      }, this);
+    }
+    const modalContent = (
+      <div>
+        <img
+          src="/static/assets/images/loading.gif"
+          className={'loading ' + (hideLoad ? 'hidden' : '')}
+          alt={hideLoad ? '' : 'loading'}
+        />
+        <div className={this.errored ? '' : 'hidden'}>
+          {this.state.errorMsg}
         </div>
-
-        {this.props.isLoading && <Loading />}
-
-        {this.props.errorMessage && <div>{this.props.errorMessage}</div>}
-
-        {!this.props.isLoading &&
-          this.state.filteredSlices.length > 0 && (
-            <List
-              width={376}
-              height={slicesListHeight}
-              rowCount={this.state.filteredSlices.length}
-              deferredMeasurementCache={cache}
-              rowHeight={cache.rowHeight}
-              rowRenderer={this.rowRenderer}
-              searchTerm={this.state.searchTerm}
-              sortBy={this.state.sortBy}
-              selectedSliceIds={this.props.selectedSliceIds}
+        <div className={this.state.slicesLoaded ? '' : 'hidden'}>
+          <BootstrapTable
+            ref="table"
+            data={this.state.slices}
+            selectRow={this.selectRowProp}
+            options={this.options}
+            hover
+            search
+            pagination
+            condensed
+            height="auto"
+          >
+            <TableHeaderColumn
+              dataField="id"
+              isKey
+              dataSort
+              hidden
             />
-          )}
-
-        {/* Drag preview is just a single fixed-position element */}
-        <AddSliceDragPreview slices={this.state.filteredSlices} />
+            <TableHeaderColumn
+              dataField="sliceName"
+              dataSort
+            >
+              {t('Name')}
+            </TableHeaderColumn>
+            <TableHeaderColumn
+              dataField="vizType"
+              dataSort
+            >
+              {t('Viz')}
+            </TableHeaderColumn>
+            <TableHeaderColumn
+              dataField="datasourceLink"
+              dataSort
+              // Will cause react-bootstrap-table to interpret the HTML returned
+              dataFormat={datasourceLink => datasourceLink}
+            >
+              {t('Datasource')}
+            </TableHeaderColumn>
+            <TableHeaderColumn
+              dataField="modified"
+              dataSort
+              sortFunc={this.modifiedDateComparator}
+              // Will cause react-bootstrap-table to interpret the HTML returned
+              dataFormat={modified => modified}
+            >
+              {t('Modified')}
+            </TableHeaderColumn>
+          </BootstrapTable>
+          <button
+            type="button"
+            className="btn btn-default"
+            data-dismiss="modal"
+            onClick={this.addSlices}
+            disabled={!enableAddSlice}
+          >
+            {t('Add Charts')}
+          </button>
+        </div>
       </div>
+    );
+
+    return (
+      <ModalTrigger
+        triggerNode={this.props.triggerNode}
+        tooltip={t('Add a new chart to the dashboard')}
+        beforeOpen={this.onEnterModal.bind(this)}
+        isMenuItem
+        modalBody={modalContent}
+        bsSize="large"
+        setModalAsTriggerChildren
+        modalTitle={t('Add Charts to Dashboard')}
+      />
     );
   }
 }
 
 SliceAdder.propTypes = propTypes;
-SliceAdder.defaultProps = defaultProps;
 
 export default SliceAdder;

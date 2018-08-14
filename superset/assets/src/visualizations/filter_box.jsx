@@ -18,7 +18,8 @@ import { t } from '../locales';
 
 // maps control names to their key in extra_filters
 const timeFilterMap = {
-  time_range: '__time_range',
+  since: '__from',
+  until: '__to',
   granularity_sqla: '__time_col',
   time_grain_sqla: '__time_grain',
   druid_time_origin: '__time_origin',
@@ -102,17 +103,27 @@ class FilterBox extends React.Component {
   }
   render() {
     let dateFilter;
-    const timeRange = '__time_range';
+    const since = '__from';
+    const until = '__to';
     if (this.props.showDateFilter) {
       dateFilter = (
         <div className="row space-1">
-          <div className="col-lg-12 col-xs-12">
+          <div className="col-lg-6 col-xs-12">
             <DateFilterControl
-              name={timeRange}
-              label={t('Time range')}
-              description={t('Select start and end date')}
-              onChange={this.changeFilter.bind(this, timeRange)}
-              value={this.state.selectedValues[timeRange]}
+              name={since}
+              label={t('Since')}
+              description={t('Select starting date')}
+              onChange={this.changeFilter.bind(this, since)}
+              value={this.state.selectedValues[since]}
+            />
+          </div>
+          <div className="col-lg-6 col-xs-12">
+            <DateFilterControl
+              name={until}
+              label={t('Until')}
+              description={t('Select end date')}
+              onChange={this.changeFilter.bind(this, until)}
+              value={this.state.selectedValues[until]}
             />
           </div>
         </div>

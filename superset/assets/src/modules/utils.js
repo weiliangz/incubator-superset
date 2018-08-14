@@ -165,6 +165,7 @@ export const controllerInterface = {
   addFiler: () => {},
   setFilter: () => {},
   getFilters: () => false,
+  clearFilter: () => {},
   removeFilter: () => {},
   filters: {},
 };
@@ -198,12 +199,8 @@ export function slugify(string) {
 
 export function getAjaxErrorMsg(error) {
   const respJSON = error.responseJSON;
-  return (respJSON && respJSON.error) ? respJSON.error :
+  return (respJSON && respJSON.message) ? respJSON.message :
           error.responseText;
-}
-
-export function getDatasourceParameter(datasourceId, datasourceType) {
-  return `${datasourceId}__${datasourceType}`;
 }
 
 export function customizeToolTip(chart, xAxisFormatter, yAxisFormatters) {

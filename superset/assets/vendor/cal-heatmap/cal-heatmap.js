@@ -897,7 +897,7 @@ var CalHeatMap = function() {
         if (options.tooltip) {
           selection
           .on("mouseover", function(d) {
-            self.tip.show(d, this);
+            self.tip.show(d);
           })
           .on("mouseout", function() {
             self.tip.hide(d);
@@ -3285,7 +3285,7 @@ Legend.prototype.redraw = function(width) {
   });
   legendItem
   .on("mouseover", function(d) {
-    calendar.legendTip.show(d, this);
+    calendar.legendTip.show(d);
   })
   .on("mouseout", function() {
     calendar.legendTip.hide();

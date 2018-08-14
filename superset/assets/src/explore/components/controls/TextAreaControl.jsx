@@ -16,7 +16,7 @@ import ModalTrigger from '../../../components/ModalTrigger';
 import { t } from '../../../locales';
 
 const propTypes = {
-  name: PropTypes.string,
+  name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   value: PropTypes.string,
   height: PropTypes.number,
@@ -46,7 +46,6 @@ export default class TextAreaControl extends React.Component {
     this.props.onChange(value);
   }
   renderEditor(inModal = false) {
-    const value = this.props.value || '';
     if (this.props.language) {
       return (
         <AceEditor
@@ -59,7 +58,7 @@ export default class TextAreaControl extends React.Component {
           width="100%"
           editorProps={{ $blockScrolling: true }}
           enableLiveAutocompletion
-          value={value}
+          value={this.props.value}
           readOnly={this.props.readOnly}
         />
       );
@@ -70,7 +69,7 @@ export default class TextAreaControl extends React.Component {
           componentClass="textarea"
           placeholder={t('textarea')}
           onChange={this.onControlChange.bind(this)}
-          value={value}
+          value={this.props.value}
           disabled={this.props.readOnly}
           style={{ height: this.props.height }}
         />

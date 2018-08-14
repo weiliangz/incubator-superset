@@ -1,13 +1,29 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import * as actions from './chartAction';
+import * as Actions from './chartAction';
 import Chart from './Chart';
 
-function mapDispatchToProps(dispatch) {
+function mapStateToProps({ charts }, ownProps) {
+  const chart = charts[ownProps.chartKey];
   return {
-    actions: bindActionCreators(actions, dispatch),
+    annotationData: chart.annotationData,
+    chartAlert: chart.chartAlert,
+    chartStatus: chart.chartStatus,
+    chartUpdateEndTime: chart.chartUpdateEndTime,
+    chartUpdateStartTime: chart.chartUpdateStartTime,
+    latestQueryFormData: chart.latestQueryFormData,
+    lastRendered: chart.lastRendered,
+    queryResponse: chart.queryResponse,
+    queryRequest: chart.queryRequest,
+    triggerQuery: chart.triggerQuery,
   };
 }
 
-export default connect(null, mapDispatchToProps)(Chart);
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chart);

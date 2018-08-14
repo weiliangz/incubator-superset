@@ -1,10 +1,9 @@
 import React from 'react';
 import sinon from 'sinon';
-import configureStore from 'redux-mock-store';
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, it, beforeEach } from 'mocha';
 import { shallow } from 'enzyme';
-import DatasourceModal from '../../../../src/datasource/DatasourceModal';
+import { Modal } from 'react-bootstrap';
 import DatasourceControl from '../../../../src/explore/components/controls/DatasourceControl';
 
 const defaultProps = {
@@ -27,14 +26,13 @@ const defaultProps = {
 };
 
 describe('DatasourceControl', () => {
-  function setup() {
-    const mockStore = configureStore([]);
-    const store = mockStore({});
-    return shallow(<DatasourceControl {...defaultProps} />, { context: { store } }).dive();
-  }
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<DatasourceControl {...defaultProps} />);
+  });
 
   it('renders a Modal', () => {
-    const wrapper = setup();
-    expect(wrapper.find(DatasourceModal)).to.have.lengthOf(1);
+    expect(wrapper.find(Modal)).to.have.lengthOf(1);
   });
 });

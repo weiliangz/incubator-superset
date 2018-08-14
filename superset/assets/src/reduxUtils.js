@@ -1,7 +1,7 @@
 import shortid from 'shortid';
 import { compose } from 'redux';
 import persistState from 'redux-localstorage';
-import { isEqual } from 'underscore';
+import equals from 'deep-equal';
 
 export function addToObject(state, arrKey, obj) {
   const newObject = Object.assign({}, state[arrKey]);
@@ -67,8 +67,9 @@ export function addToArr(state, arrKey, obj) {
 export function initEnhancer(persist = true) {
   let enhancer = persist ? compose(persistState()) : compose();
   if (process.env.NODE_ENV === 'dev') {
-    /* eslint-disable-next-line no-underscore-dangle */
+    /* eslint-disable no-underscore-dangle */
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    /* eslint-enable */
     enhancer = persist ? composeEnhancers(persistState()) : composeEnhancers();
   }
   return enhancer;
@@ -95,5 +96,5 @@ export function areArraysShallowEqual(arr1, arr2) {
 }
 
 export function areObjectsEqual(obj1, obj2) {
-  return isEqual(obj1, obj2);
+  return equals(obj1, obj2, true);
 }

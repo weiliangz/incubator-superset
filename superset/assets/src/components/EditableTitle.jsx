@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import TooltipWrapper from './TooltipWrapper';
 import { t } from '../locales';
 
@@ -10,18 +9,14 @@ const propTypes = {
   onSaveTitle: PropTypes.func,
   noPermitTooltip: PropTypes.string,
   showTooltip: PropTypes.bool,
-  emptyText: PropTypes.node,
-  style: PropTypes.object,
 };
 const defaultProps = {
   title: t('Title'),
   canEdit: false,
   showTooltip: true,
-  onSaveTitle: () => {},
-  emptyText: '<empty>',
 };
 
-export default class EditableTitle extends React.PureComponent {
+class EditableTitle extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,10 +27,8 @@ export default class EditableTitle extends React.PureComponent {
     this.handleClick = this.handleClick.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.title !== this.state.title) {
       this.setState({
@@ -44,14 +37,15 @@ export default class EditableTitle extends React.PureComponent {
       });
     }
   }
-
   handleClick() {
-    if (!this.props.canEdit || this.state.isEditing) {
+    if (!this.props.canEdit) {
       return;
     }
-    this.setState({ isEditing: true });
-  }
 
+    this.setState({
+      isEditing: true,
+    });
+  }
   handleBlur() {
     if (!this.props.canEdit) {
       return;
@@ -73,72 +67,42 @@ export default class EditableTitle extends React.PureComponent {
       this.setState({
         lastTitle: this.state.title,
       });
-    }
-
-    if (this.props.title !== this.state.title) {
       this.props.onSaveTitle(this.state.title);
     }
   }
-
-  handleKeyUp(ev) {
-    // this entire method exists to support using EditableTitle as the title of a
-    // react-bootstrap Tab, as a workaround for this line in react-bootstrap https://goo.gl/ZVLmv4
-    //
-    // tl;dr when a Tab EditableTitle is being edited, typically the Tab it's within has been
-    // clicked and is focused/active. for accessibility, when focused the Tab <a /> intercepts
-    // the ' ' key (among others, including all arrows) and onChange() doesn't fire. somehow
-    // keydown is still called so we can detect this and manually add a ' ' to the current title
-    if (ev.key === ' ') {
-      let title = ev.target.value;
-      const titleLength = (title || '').length;
-      if (title && title[titleLength - 1] !== ' ') {
-        title = `${title} `;
-        this.setState(() => ({ title }));
-      }
-    }
-  }
-
   handleChange(ev) {
     if (!this.props.canEdit) {
       return;
     }
+
     this.setState({
       title: ev.target.value,
     });
   }
-
   handleKeyPress(ev) {
     if (ev.key === 'Enter') {
       ev.preventDefault();
+
       this.handleBlur();
     }
   }
-
   render() {
-    let value;
-    if (this.state.title) {
-      value = this.state.title;
-    } else if (!this.state.isEditing) {
-      value = this.props.emptyText;
-    }
     let input = (
       <input
         required
         type={this.state.isEditing ? 'text' : 'button'}
-        value={value}
-        className={!this.state.title ? 'text-muted' : null}
-        onKeyUp={this.handleKeyUp}
+        value={this.state.title}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         onClick={this.handleClick}
         onKeyPress={this.handleKeyPress}
       />
     );
-    if (this.props.showTooltip && !this.state.isEditing) {
+    if (this.props.showTooltip) {
       input = (
         <TooltipWrapper
           label="title"
-          tooltip={this.props.canEdit ? t('click to edit') :
+          tooltip={this.props.canEdit ? t('click to edit title') :
               this.props.noPermitTooltip || t('You don\'t have the rights to alter this title.')}
         >
           {input}
@@ -146,18 +110,11 @@ export default class EditableTitle extends React.PureComponent {
       );
     }
     return (
-      <span
-        className={cx(
-          'editable-title',
-          this.props.canEdit && 'editable-title--editable',
-          this.state.isEditing && 'editable-title--editing',
-        )}
-        style={this.props.style}
-      >
-        {input}
-      </span>
+      <span className="editable-title">{input}</span>
     );
   }
 }
 EditableTitle.propTypes = propTypes;
 EditableTitle.defaultProps = defaultProps;
+
+export default EditableTitle;

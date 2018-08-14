@@ -114,7 +114,7 @@ export const formatDateVerbose = function (dttm) {
 
 export const formatDateThunk = function (format) {
   if (!format) {
-    return formatDateVerbose;
+    return formatDate;
   }
 
   const formatter = d3.time.format(format);

@@ -26,6 +26,6 @@ describe('ControlPanelsContainer', () => {
   });
 
   it('renders ControlPanelSections', () => {
-    expect(wrapper.find(ControlPanelSection)).to.have.lengthOf(6);
+    expect(wrapper.find(ControlPanelSection)).to.have.lengthOf(7);
   });
 });

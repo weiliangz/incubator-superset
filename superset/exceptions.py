@@ -26,13 +26,5 @@ class NoDataException(SupersetException):
     status = 400
 
 
-class NullValueException(SupersetException):
-    status = 400
-
-
 class SupersetTemplateException(SupersetException):
-    pass
-
-
-class SpatialException(SupersetException):
     pass

@@ -20,7 +20,6 @@ from flask import escape, Markup
 from flask_appbuilder import Model
 from flask_appbuilder.models.decorators import renders
 from flask_babel import lazy_gettext as _
-import pandas
 from pydruid.client import PyDruid
 from pydruid.utils.aggregators import count
 from pydruid.utils.dimensions import MapLookupExtraction, RegexExtraction
@@ -99,7 +98,6 @@ class DruidCluster(Model, AuditMixinNullable, ImportMixin):
     export_fields = ('cluster_name', 'coordinator_host', 'coordinator_port',
                      'coordinator_endpoint', 'broker_host', 'broker_port',
                      'broker_endpoint', 'cache_timeout')
-    update_from_object_fields = export_fields
     export_children = ['datasources']
 
     def __repr__(self):
@@ -111,7 +109,6 @@ class DruidCluster(Model, AuditMixinNullable, ImportMixin):
     @property
     def data(self):
         return {
-            'id': self.id,
             'name': self.cluster_name,
             'backend': 'druid',
         }
@@ -144,11 +141,6 @@ class DruidCluster(Model, AuditMixinNullable, ImportMixin):
             self.coordinator_host, self.coordinator_port) + '/status'
         return json.loads(requests.get(endpoint).text)['version']
 
-    @property
-    @utils.memoized
-    def druid_version(self):
-        return self.get_druid_version()
-
     def refresh_datasources(
             self,
             datasource_name=None,
@@ -157,6 +149,7 @@ class DruidCluster(Model, AuditMixinNullable, ImportMixin):
         """Refresh metadata of all datasources in the cluster
         If ``datasource_name`` is specified, only that datasource is updated
         """
+        self.druid_version = self.get_druid_version()
         ds_list = self.get_datasources()
         blacklist = conf.get('DRUID_DATA_SOURCE_BLACKLIST', [])
         ds_refresh = []
@@ -277,7 +270,6 @@ class DruidColumn(Model, BaseColumn):
         'count_distinct', 'sum', 'avg', 'max', 'min', 'filterable',
         'description', 'dimension_spec_json', 'verbose_name',
     )
-    update_from_object_fields = export_fields
     export_parent = 'datasource'
 
     def __repr__(self):
@@ -420,9 +412,8 @@ class DruidMetric(Model, BaseMetric):
 
     export_fields = (
         'metric_name', 'verbose_name', 'metric_type', 'datasource_id',
-        'json', 'description', 'is_restricted', 'd3format', 'warning_text',
+        'json', 'description', 'is_restricted', 'd3format',
     )
-    update_from_object_fields = export_fields
     export_parent = 'datasource'
 
     @property
@@ -489,7 +480,6 @@ class DruidDatasource(Model, BaseDatasource):
         'datasource_name', 'is_hidden', 'description', 'default_endpoint',
         'cluster_name', 'offset', 'cache_timeout', 'params',
     )
-    update_from_object_fields = export_fields
 
     export_parent = 'cluster'
     export_children = ['columns', 'metrics']
@@ -529,9 +519,6 @@ class DruidDatasource(Model, BaseDatasource):
             '[{obj.cluster_name}].[{obj.datasource_name}]'
             '(id:{obj.id})').format(obj=self)
 
-    def update_from_object(self, obj):
-        return NotImplementedError()
-
     @property
     def link(self):
         name = escape(self.datasource_name)
@@ -549,7 +536,7 @@ class DruidDatasource(Model, BaseDatasource):
                 'all', '5 seconds', '30 seconds', '1 minute', '5 minutes'
                 '30 minutes', '1 hour', '6 hour', '1 day', '7 days',
                 'week', 'week_starting_sunday', 'week_ending_saturday',
-                'month', 'quarter', 'year',
+                'month',
             ],
             'time_grains': ['now'],
         }
@@ -757,8 +744,6 @@ class DruidDatasource(Model, BaseDatasource):
             'week_starting_sunday': 'P1W',
             'week_ending_saturday': 'P1W',
             'month': 'P1M',
-            'quarter': 'P3M',
-            'year': 'P1Y',
         }
 
         granularity = {'type': 'period'}
@@ -1346,13 +1331,10 @@ class DruidDatasource(Model, BaseDatasource):
             client=client, query_obj=query_obj, phase=2)
         df = client.export_pandas()
 
-        if df is None or df.size == 0:
-            return QueryResult(
-                df=pandas.DataFrame([]),
-                query=query_str,
-                duration=datetime.now() - qry_start_dttm)
-
         df = self.homogenize_types(df, query_obj.get('groupby', []))
+
+        if df is None or df.size == 0:
+            raise Exception(_('No data was returned.'))
         df.columns = [
             DTTM_ALIAS if c in ('timestamp', '__time') else c
             for c in df.columns
@@ -1589,16 +1571,6 @@ class DruidDatasource(Model, BaseDatasource):
             .filter_by(datasource_name=datasource_name)
             .all()
         )
-
-    def external_metadata(self):
-        self.merge_flag = True
-        return [
-            {
-                'name': k,
-                'type': v.get('type'),
-            }
-            for k, v in self.latest_metadata().items()
-        ]
 
 
 sa.event.listen(DruidDatasource, 'after_insert', set_perm)

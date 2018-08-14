@@ -274,7 +274,6 @@ export default class AdhocFilterEditPopoverSimpleTabContent extends React.Compon
                 showHeader={false}
                 noResultsText={t('type a value here')}
                 refFunc={this.multiComparatorRef}
-                disabled={adhocFilter.operator === 'IS NOT NULL' || adhocFilter.operator === 'IS NULL'}
               /> :
               <input
                 ref={this.focusComparator}

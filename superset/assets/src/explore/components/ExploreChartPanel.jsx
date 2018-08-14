@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap';
 
-import { chartPropShape } from '../../dashboard/util/propShapes';
+import { chartPropType } from '../../chart/chartReducer';
 import ChartContainer from '../../chart/ChartContainer';
 import ExploreChartHeader from './ExploreChartHeader';
 
@@ -27,7 +27,7 @@ const propTypes = {
   standalone: PropTypes.bool,
   timeout: PropTypes.number,
   refreshOverlayVisible: PropTypes.bool,
-  chart: chartPropShape,
+  chart: PropTypes.shape(chartPropType),
   errorMessage: PropTypes.node,
 };
 
@@ -38,15 +38,14 @@ class ExploreChartPanel extends React.PureComponent {
   }
 
   renderChart() {
-    const { chart } = this.props;
     return (
       <ChartContainer
-        chartId={chart.id}
         containerId={this.props.containerId}
         datasource={this.props.datasource}
         formData={this.props.form_data}
         height={this.getHeight()}
         slice={this.props.slice}
+        chartKey={this.props.chart.chartKey}
         setControlValue={this.props.actions.setControlValue}
         timeout={this.props.timeout}
         vizType={this.props.vizType}
@@ -54,16 +53,6 @@ class ExploreChartPanel extends React.PureComponent {
         errorMessage={this.props.errorMessage}
         onQuery={this.props.onQuery}
         onDismissRefreshOverlay={this.props.onDismissRefreshOverlay}
-        annotationData={chart.annotationData}
-        chartAlert={chart.chartAlert}
-        chartStatus={chart.chartStatus}
-        chartUpdateEndTime={chart.chartUpdateEndTime}
-        chartUpdateStartTime={chart.chartUpdateStartTime}
-        latestQueryFormData={chart.latestQueryFormData}
-        lastRendered={chart.lastRendered}
-        queryResponse={chart.queryResponse}
-        queryRequest={chart.queryRequest}
-        triggerQuery={chart.triggerQuery}
       />
     );
   }

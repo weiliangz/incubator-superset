@@ -49,10 +49,8 @@ def filter_not_empty_values(value):
 
 class CsvToDatabaseForm(DynamicForm):
     # pylint: disable=E0211
-    def csv_enabled_dbs():
-        return db.session.query(
-            models.Database).filter_by(
-                allow_csv_upload=True).all()
+    def all_db_items():
+        return db.session.query(models.Database)
 
     name = StringField(
         _('Table Name'),
@@ -66,7 +64,7 @@ class CsvToDatabaseForm(DynamicForm):
             FileRequired(), FileAllowed(['csv'], _('CSV Files Only!'))])
     con = QuerySelectField(
         _('Database'),
-        query_factory=csv_enabled_dbs,
+        query_factory=all_db_items,
         get_pk=lambda a: a.id, get_label=lambda a: a.database_name)
     sep = StringField(
         _('Delimiter'),

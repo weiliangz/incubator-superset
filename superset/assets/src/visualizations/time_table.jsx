@@ -1,16 +1,29 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import { Table, Thead, Th, Tr, Td } from 'reactable';
 import d3 from 'd3';
 import Mustache from 'mustache';
+import { Sparkline, LineSeries, PointSeries, VerticalReferenceLine, WithTooltip } from '@data-ui/sparkline';
 
 import MetricOption from '../components/MetricOption';
-import { formatDateThunk } from '../modules/dates';
 import { d3format } from '../modules/utils';
+import { formatDateThunk } from '../modules/dates';
 import InfoTooltipWithTrigger from '../components/InfoTooltipWithTrigger';
-import SparklineCell from './SparklineCell';
 import './time_table.css';
+
+const SPARKLINE_MARGIN = {
+  top: 8,
+  right: 8,
+  bottom: 8,
+  left: 8,
+};
+const sparklineTooltipProps = {
+  style: {
+    opacity: 0.8,
+  },
+  offsetTop: 0,
+};
 
 const ACCESSIBLE_COLOR_BOUNDS = ['#ca0020', '#0571b0'];
 
@@ -24,8 +37,8 @@ function FormattedNumber({ num, format }) {
 }
 
 FormattedNumber.propTypes = {
-  num: PropTypes.number,
-  format: PropTypes.string,
+  num: propTypes.number,
+  format: propTypes.string,
 };
 
 function viz(slice, payload) {
@@ -58,9 +71,7 @@ function viz(slice, payload) {
         <MetricOption metric={metricData} url={url} showFormula={false} openInNewWindow />
       );
     } else {
-      leftCell = url
-        ? <a href={url} rel="noopener noreferrer" target="_blank">{metricLabel}</a>
-        : metric;
+      leftCell = url ? <a href={url} target="_blank">{metricLabel}</a> : metric;
     }
     const row = { metric: leftCell };
     fd.column_collection.forEach((column) => {
@@ -80,27 +91,49 @@ function viz(slice, payload) {
             }
           }
         }
-
         const formatDate = formatDateThunk(column.dateFormat);
-
         row[column.key] = {
           data: sparkData[sparkData.length - 1],
           display: (
-            <SparklineCell
-              width={parseInt(column.width, 10) || 300}
-              height={parseInt(column.height, 10) || 50}
-              data={sparkData}
-              ariaLabel={`spark-${metricLabel}`}
-              numberFormat={column.d3format}
-              yAxisBounds={column.yAxisBounds}
-              showYAxis={column.showYAxis}
+            <WithTooltip
+              tooltipProps={sparklineTooltipProps}
+              hoverStyles={null}
               renderTooltip={({ index }) => (
                 <div>
-                  <strong>{d3format(column.d3Format, sparkData[index])}</strong>
+                  <strong>{d3format(column.d3format, sparkData[index])}</strong>
                   <div>{formatDate(data[index].iso)}</div>
                 </div>
               )}
-            />
+            >
+              {({ onMouseLeave, onMouseMove, tooltipData }) => (
+                <Sparkline
+                  ariaLabel={`spark-${metricLabel}`}
+                  width={parseInt(column.width, 10) || 300}
+                  height={parseInt(column.height, 10) || 50}
+                  margin={SPARKLINE_MARGIN}
+                  data={sparkData}
+                  onMouseLeave={onMouseLeave}
+                  onMouseMove={onMouseMove}
+                >
+                  <LineSeries
+                    showArea={false}
+                    stroke="#767676"
+                  />
+                  {tooltipData &&
+                    <VerticalReferenceLine
+                      reference={tooltipData.index}
+                      strokeDasharray="3 3"
+                      strokeWidth={1}
+                    />}
+                  {tooltipData &&
+                    <PointSeries
+                      points={[tooltipData.index]}
+                      fill="#767676"
+                      strokeWidth={1}
+                    />}
+                </Sparkline>
+              )}
+            </WithTooltip>
           ),
         };
       } else {
@@ -165,7 +198,6 @@ function viz(slice, payload) {
     });
     return row;
   });
-
   ReactDOM.render(
     <Table
       className="table table-no-hover"

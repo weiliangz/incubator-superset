@@ -9,6 +9,10 @@ import { table, defaultQueryEditor, databases, tables } from './fixtures';
 import SqlEditorLeftBar from '../../../src/SqlLab/components/SqlEditorLeftBar';
 import TableElement from '../../../src/SqlLab/components/TableElement';
 
+global.notify = {
+  error: () => {},
+};
+
 describe('SqlEditorLeftBar', () => {
   const mockedProps = {
     actions: {
@@ -16,7 +20,6 @@ describe('SqlEditorLeftBar', () => {
       queryEditorSetDb: sinon.stub(),
       setDatabases: sinon.stub(),
       addTable: sinon.stub(),
-      addDangerToast: sinon.stub(),
     },
     tables: [table],
     queryEditor: defaultQueryEditor,

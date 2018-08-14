@@ -4,7 +4,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import io
 import json
 import os
 import subprocess
@@ -17,14 +16,11 @@ PACKAGE_FILE = os.path.join(PACKAGE_DIR, 'package.json')
 with open(PACKAGE_FILE) as package_file:
     version_string = json.load(package_file)['version']
 
-with io.open('README.md', encoding='utf-8') as f:
-    long_description = f.read()
-
 
 def get_git_sha():
     try:
-        s = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-        return s.decode().strip()
+        s = str(subprocess.check_output(['git', 'rev-parse', 'HEAD']))
+        return s.strip()
     except Exception:
         return ''
 
@@ -46,9 +42,8 @@ with open(os.path.join(PACKAGE_DIR, 'version_info.json'), 'w') as version_file:
 setup(
     name='superset',
     description=(
-        'A modern, enterprise-ready business intelligence web application'),
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+        'A interactive data visualization platform build on SqlAlchemy '
+        'and druid.io'),
     version=version_string,
     packages=find_packages(),
     include_package_data=True,
@@ -56,9 +51,8 @@ setup(
     scripts=['superset/bin/superset'],
     install_requires=[
         'bleach',
-        'boto3==1.4.7',
-        'botocore>=1.7.0, <1.8.0',
-        'celery>=4.2.0',
+        'boto3>=1.4.6',
+        'celery>=4.1.1',
         'colorama',
         'contextlib2',
         'cryptography',
@@ -67,6 +61,8 @@ setup(
         'flask-caching',
         'flask-compress',
         'flask-migrate',
+        'flask-script',
+        'flask-testing',
         'flask-wtf',
         'flower',  # deprecated
         'future>=0.16.0, <0.17',
@@ -74,9 +70,8 @@ setup(
         'gunicorn',  # deprecated
         'humanize',
         'idna',
-        'isodate',
         'markdown',
-        'pandas>=0.18.0',
+        'pandas',
         'parsedatetime',
         'pathlib2',
         'polyline',
@@ -86,12 +81,11 @@ setup(
         'python-geohash',
         'pyyaml>=3.11',
         'requests',
-        'simplejson>=3.15.0',
+        'simplejson',
         'six',
         'sqlalchemy',
         'sqlalchemy-utils',
         'sqlparse',
-        'tableschema',
         'thrift>=0.9.3',
         'thrift-sasl>=0.2.1',
         'unicodecsv',

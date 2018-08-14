@@ -1,5 +1,4 @@
 import React from 'react';
-import configureStore from 'redux-mock-store';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { shallow } from 'enzyme';
@@ -14,14 +13,11 @@ describe('URLShortLinkButton', () => {
     emailContent: 'mock content',
   };
 
-  function setup() {
-    const mockStore = configureStore([]);
-    const store = mockStore({});
-    return shallow(<URLShortLinkButton {...defaultProps} />, { context: { store } }).dive();
-  }
-
+  it('renders', () => {
+    expect(React.isValidElement(<URLShortLinkButton {...defaultProps} />)).to.equal(true);
+  });
   it('renders OverlayTrigger', () => {
-    const wrapper = setup();
+    const wrapper = shallow(<URLShortLinkButton {...defaultProps} />);
     expect(wrapper.find(OverlayTrigger)).have.length(1);
   });
 });

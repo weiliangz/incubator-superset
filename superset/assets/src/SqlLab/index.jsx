@@ -4,8 +4,7 @@ import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 
-import getInitialState from './getInitialState';
-import rootReducer from './reducers';
+import { getInitialState, sqlLabReducer } from './reducers';
 import { initEnhancer } from '../reduxUtils';
 import { initJQueryAjax } from '../modules/utils';
 import App from './components/App';
@@ -20,21 +19,13 @@ initJQueryAjax();
 
 const appContainer = document.getElementById('app');
 const bootstrapData = JSON.parse(appContainer.getAttribute('data-bootstrap'));
-const state = getInitialState(bootstrapData);
+const state = Object.assign({}, getInitialState(bootstrapData.defaultDbId), bootstrapData);
 
 const store = createStore(
-  rootReducer,
-  state,
-  compose(
-    applyMiddleware(thunkMiddleware),
-    initEnhancer(),
-  ),
-);
+  sqlLabReducer, state, compose(applyMiddleware(thunkMiddleware), initEnhancer()));
 
 // jquery hack to highlight the navbar menu
-$('a:contains("SQL Lab")')
-  .parent()
-  .addClass('active');
+$('a:contains("SQL Lab")').parent().addClass('active');
 
 render(
   <Provider store={store}>

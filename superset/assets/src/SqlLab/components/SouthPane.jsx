@@ -20,7 +20,6 @@ const propTypes = {
   actions: PropTypes.object.isRequired,
   activeSouthPaneTab: PropTypes.string,
   height: PropTypes.number,
-  databases: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -47,12 +46,12 @@ class SouthPane extends React.PureComponent {
           query={latestQuery}
           actions={props.actions}
           height={innerTabHeight}
-          database={this.props.databases[latestQuery.dbId]}
         />
       );
     } else {
       results = <Alert bsStyle="info">{t('Run a query to display results here')}</Alert>;
     }
+
     const dataPreviewTabs = props.dataPreviewQueries.map(query => (
       <Tab
         title={t('Preview for %s', query.tableName)}
@@ -88,7 +87,7 @@ class SouthPane extends React.PureComponent {
             title={t('Query History')}
             eventKey="History"
           >
-            <div style={{ height: `${innerTabHeight}px`, overflow: 'auto' }}>
+            <div style={{ height: `${innerTabHeight}px`, overflow: 'scroll' }}>
               <QueryHistory queries={props.editorQueries} actions={props.actions} />
             </div>
           </Tab>
@@ -99,10 +98,9 @@ class SouthPane extends React.PureComponent {
   }
 }
 
-function mapStateToProps({ sqlLab }) {
+function mapStateToProps(state) {
   return {
-    activeSouthPaneTab: sqlLab.activeSouthPaneTab,
-    databases: sqlLab.databases,
+    activeSouthPaneTab: state.activeSouthPaneTab,
   };
 }
 

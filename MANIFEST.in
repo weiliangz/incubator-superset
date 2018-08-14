@@ -1,4 +1,3 @@
-include README.md
 recursive-include superset/data *
 recursive-include superset/migrations *
 recursive-include superset/static *

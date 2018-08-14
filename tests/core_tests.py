@@ -24,7 +24,6 @@ import sqlalchemy as sqla
 
 from superset import dataframe, db, jinja_context, security_manager, sql_lab, utils
 from superset.connectors.sqla.models import SqlaTable
-from superset.db_engine_specs import BaseEngineSpec
 from superset.models import core as models
 from superset.models.sql_lab import Query
 from superset.views.core import DatabaseView
@@ -228,14 +227,6 @@ class CoreTests(SupersetTestCase):
         assert len(resp) > 0
         assert 'Carbon Dioxide' in resp
 
-    def test_slice_data(self):
-        # slice data should have some required attributes
-        self.login(username='admin')
-        slc = self.get_slice('Girls', db.session)
-        slc_data_attributes = slc.data.keys()
-        assert('changed_on' in slc_data_attributes)
-        assert('modified' in slc_data_attributes)
-
     def test_slices(self):
         # Testing by hitting the two supported end points for all slices
         self.login(username='admin')
@@ -263,8 +254,8 @@ class CoreTests(SupersetTestCase):
 
     def test_add_slice(self):
         self.login(username='admin')
-        # assert that /chart/add responds with 200
-        url = '/chart/add'
+        # assert that /slicemodelview/add responds with 200
+        url = '/slicemodelview/add'
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
 
@@ -418,8 +409,8 @@ class CoreTests(SupersetTestCase):
 
     def test_gamma(self):
         self.login(username='gamma')
-        assert 'List Charts' in self.get_resp('/chart/list/')
-        assert 'List Dashboard' in self.get_resp('/dashboard/list/')
+        assert 'List Charts' in self.get_resp('/slicemodelview/list/')
+        assert 'List Dashboard' in self.get_resp('/dashboardmodelview/list/')
 
     def test_csv_endpoint(self):
         self.login('admin')
@@ -435,15 +426,6 @@ class CoreTests(SupersetTestCase):
         data = csv.reader(io.StringIO(resp))
         expected_data = csv.reader(
             io.StringIO('first_name,last_name\nadmin, user\n'))
-
-        sql = "SELECT first_name FROM ab_user WHERE first_name LIKE '%admin%'"
-        client_id = '{}'.format(random.getrandbits(64))[:10]
-        self.run_sql(sql, client_id, raise_on_error=True)
-
-        resp = self.get_resp('/superset/csv/{}'.format(client_id))
-        data = csv.reader(io.StringIO(resp))
-        expected_data = csv.reader(
-            io.StringIO('first_name\nadmin\n'))
 
         self.assertEqual(list(expected_data), list(data))
         self.logout()
@@ -636,7 +618,8 @@ class CoreTests(SupersetTestCase):
             (datetime.datetime(2017, 11, 18, 21, 53, 0, 219225, tzinfo=tz),),
             (datetime.datetime(2017, 11, 18, 22, 6, 30, 61810, tzinfo=tz),),
         ]
-        df = dataframe.SupersetDataFrame(list(data), [['data']], BaseEngineSpec)
+        df = dataframe.SupersetDataFrame(pd.DataFrame(data=list(data),
+                                                      columns=['data']))
         data = df.data
         self.assertDictEqual(
             data[0],

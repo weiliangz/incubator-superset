@@ -12,9 +12,7 @@ export default function Checkbox({ checked, onChange, style }) {
     <span style={style}>
       <i
         className={`fa fa-check ${checked ? 'text-primary' : 'text-transparent'}`}
-        onClick={() => {
-          onChange(!checked);
-        }}
+        onClick={onChange.bind(!checked)}
         style={{
           border: '1px solid #aaa',
           borderRadius: '2px',

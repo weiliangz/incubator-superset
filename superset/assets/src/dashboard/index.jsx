@@ -7,25 +7,18 @@ import thunk from 'redux-thunk';
 import { initEnhancer } from '../reduxUtils';
 import { appSetup } from '../common';
 import { initJQueryAjax } from '../modules/utils';
-import DashboardContainer from './containers/Dashboard';
-import getInitialState from './reducers/getInitialState';
-import rootReducer from './reducers/index';
+import DashboardContainer from './components/DashboardContainer';
+import rootReducer, { getInitialState } from './reducers';
 
 appSetup();
 initJQueryAjax();
 
 const appContainer = document.getElementById('app');
 const bootstrapData = JSON.parse(appContainer.getAttribute('data-bootstrap'));
-const initState = getInitialState(bootstrapData);
+const initState = Object.assign({}, getInitialState(bootstrapData));
 
 const store = createStore(
-  rootReducer,
-  initState,
-  compose(
-    applyMiddleware(thunk),
-    initEnhancer(false),
-  ),
-);
+  rootReducer, initState, compose(applyMiddleware(thunk), initEnhancer(false)));
 
 ReactDOM.render(
   <Provider store={store}>
@@ -33,3 +26,4 @@ ReactDOM.render(
   </Provider>,
   appContainer,
 );
+

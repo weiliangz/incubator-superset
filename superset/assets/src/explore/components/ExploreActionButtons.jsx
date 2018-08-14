@@ -8,7 +8,6 @@ import { t } from '../../locales';
 import { exportChart, getExploreLongUrl } from '../exploreUtils';
 
 const propTypes = {
-  actions: PropTypes.object.isRequired,
   canDownload: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
   chartStatus: PropTypes.string,
   latestQueryFormData: PropTypes.object,
@@ -16,7 +15,7 @@ const propTypes = {
 };
 
 export default function ExploreActionButtons({
-    actions, canDownload, chartStatus, latestQueryFormData, queryResponse }) {
+    canDownload, chartStatus, latestQueryFormData, queryResponse }) {
   const exportToCSVClasses = cx('btn btn-default btn-sm', {
     'disabled disabledButton': !canDownload,
   });
@@ -60,7 +59,6 @@ export default function ExploreActionButtons({
         queryResponse={queryResponse}
         latestQueryFormData={latestQueryFormData}
         chartStatus={chartStatus}
-        onOpenInEditor={actions.redirectSQLLab}
       />
     </div>
   );
