@@ -1119,6 +1119,49 @@ export const controls = {
     default: 'https://www.youtube.com/embed/AdSZJzb-aX8',
   },
 
+
+
+
+
+
+
+
+
+  
+
+  token: {
+    type: 'TextControl',
+    label: t('Access Token'),
+    description: t('Access Token is require'),
+    default: '',
+  },
+
+  embed_url: {
+    type: 'TextControl',
+    label: t('Embed Url'),
+    description: t('Embed Url is require'),
+    default: '',
+  },
+
+  report_id: {
+    type: 'TextControl',
+    label: t('Report ID'),
+    description: t('Report ID is require'),
+    default: '',
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
   x_axis_label: {
     type: 'TextControl',
     label: t('X Axis Label'),

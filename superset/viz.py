@@ -1826,6 +1826,24 @@ class IFrameViz(BaseViz):
         return None
 
 
+
+class EmbedPowerBIViz(BaseViz):
+
+    """You can squeeze just about anything in this iFrame component"""
+
+    viz_type = 'powerBI_report'
+    verbose_name = _('PowerBI')
+    credits = 'a <a href="https://github.com/airbnb/superset">Superset</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
+
+
+
 class ParallelCoordinatesViz(BaseViz):
 
     """Interactive parallel coordinate implementation

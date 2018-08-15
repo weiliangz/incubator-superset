@@ -16,12 +16,12 @@ function embeddedPowerBIWidget(slice) {
 
     const fd = slice.formData;
     // This is the  embed application access token.
-    const txtAccessToken = slice.render_template(fd.embed_powerbi_token);
+    const txtAccessToken = slice.render_template(fd.token);
     // The embed URL
-    const txtEmbedUrl = slice.render_template(fd.embed_powerbi_url);
+    const txtEmbedUrl = slice.render_template(fd.embed_url);
 
     // Read report Id
-    const txtEmbedReportId = slice.render_template(fd.embed_powerbi_report_id);
+    const txtEmbedReportId = slice.render_template(fd.report_id);
 
     // Embed configuration used to describe the what and how to embed.
     // This object is used when calling powerbi.embed.
