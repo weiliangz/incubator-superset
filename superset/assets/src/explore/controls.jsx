@@ -1150,6 +1150,34 @@ export const controls = {
     default: '',
   },
 
+  page_name: {
+    type: 'TextControl',
+    label: t('Page Name'),
+    description: t('Page Name is require'),
+    default: '',
+  },
+
+  visual_name: {
+    type: 'TextControl',
+    label: t('Visual Name'),
+    description: t('Visual Name is require'),
+    default: '',
+  },
+
+  dashboard_id: {
+    type: 'TextControl',
+    label: t('Dashboard ID'),
+    description: t('Dashboard ID is require'),
+    default: '',
+  },
+  
+  title_id: {
+    type: 'TextControl',
+    label: t('Title ID'),
+    description: t('Title ID is require'),
+    default: '',
+  },
+
 
 
 

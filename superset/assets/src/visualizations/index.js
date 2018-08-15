@@ -51,6 +51,9 @@ export const VIZ_TYPES = {
   deck_polygon: 'deck_polygon',
   rose: 'rose',
   powerBI_report: 'powerBI_report',
+  powerBI_report_visual: 'powerBI_report_visual',
+  powerBI_report_dashboard: 'powerBI_report_dashboard',
+  powerBI_report_title: 'powerBI_report_title',
 };
 
 const loadVis = promise =>
@@ -140,6 +143,13 @@ const vizMap = {
   [VIZ_TYPES.rose]: () => loadVis(import(/* webpackChunkName: "rose" */ './rose.js')),
 
   [VIZ_TYPES.powerBI_report]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi" */ './embedded_powerbi.js')),
+
+  [VIZ_TYPES.powerBI_report_visual]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi_visual" */ './embedded_powerbi_visual.js')),
+
+  [VIZ_TYPES.powerBI_report_dashboard]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi_dashboard" */ './embedded_powerbi_dashboard.js')),
+
+  [VIZ_TYPES.powerBI_report_title]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi_title" */ './embedded_powerbi_title.js')),
+
 };
 
 export default vizMap;
