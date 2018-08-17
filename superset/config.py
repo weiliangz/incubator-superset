@@ -98,7 +98,7 @@ ENABLE_PROXY_FIX = False
 APP_NAME = 'Superset'
 
 # Uncomment to setup an App icon
-APP_ICON = '/static/assets/images/superset-logo@2x.png'
+APP_ICON = '/static/assets/images/SavyBI-Logo-White.png'
 
 # Druid query timezone
 # tz.tzutc() : Using utc timezone

@@ -1,4 +1,4 @@
-{% import 'appbuilder/general/lib.html' as lib %}
+{% set menu = appbuilder.menu %}{% import 'appbuilder/general/lib.html' as lib %}
 <html>
   <head>
     <title>
@@ -43,18 +43,26 @@
 
   <body>
     {% block navbar %}
-      {% if not standalone_mode %}
-        <header class="top" role="header">
-          {% include 'appbuilder/navbar.html' %}
-        </header>
-      {% endif %}
-    {% endblock %}
-
-    {% block body %}
-      <div id="app" data-bootstrap="{{ bootstrap_data }}" >
-        <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
+    {% if not standalone_mode %}
+      <header class="top" role="header">
+        {% include 'appbuilder/navbar.html' %}
+      </header>
+    {% endif %}
+  {% endblock %}
+  <div class="row" id= "content" >
+      <div class="col-lg-2 test" id="button-animation">
+      <div class="left-menu">
+          <ul class="nav navbar-nav">
+              {% include 'appbuilder/navbar_menu.html' %}
+          </ul>
       </div>
-    {% endblock %}
+    </div>
+    <div class="col-lg-8 content-center">
+        {% block body %}
+        <div id="app" data-bootstrap="{{ bootstrap_data }}"  >
+          <img src="/static/assets/images/loading.gif" style="width: 50px; margin: 10px;">
+        </div>
+      {% endblock %}
 
     <!-- Modal for misc messages / alerts  -->
     <div class="misc-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -79,6 +87,15 @@
         {% set entry_files = js_manifest(entry) %}
         {% for entry in entry_files %}
           <script src="{{ entry }}"></script>
+          <script>
+            $(document).ready(function() {
+              $("#toggle").click(function() {
+                $("#button-animation").toggleClass("test");
+                $("#content .col-lg-8").toggleClass("content-center");
+                $("#toggle").toggleClass("glyphicon-menu-hamburger")
+              });
+          });
+          </script>
         {% endfor %}
       {% endif %}
     {% endblock %}

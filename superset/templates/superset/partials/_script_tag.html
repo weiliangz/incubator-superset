@@ -1,5 +1,14 @@
 {% block tail_js %}
   {% for entry in js_manifest(filename) %}
     <script src="{{ entry }}"></script>
+    <script>
+      $(document).ready(function () {
+        $("#toggle").click(function() {
+          $("#button-animation").toggleClass("test");
+          $("#content .col-lg-8").toggleClass("content-center");
+          $("#toggle").toggleClass("glyphicon-menu-hamburger")
+        });
+      });
+    </script> 
   {% endfor %}
 {% endblock %}
