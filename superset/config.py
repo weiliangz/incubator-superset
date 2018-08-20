@@ -95,6 +95,7 @@ ENABLE_PROXY_FIX = False
 # GLOBALS FOR APP Builder
 # ------------------------------
 # Uncomment to setup Your App name
+
 APP_NAME = 'Superset'
 
 # Uncomment to setup an App icon
@@ -110,6 +111,16 @@ APP_ICON = '/static/assets/images/SavyBI-Logo-White.png'
 DRUID_IS_ACTIVE = True
 DRUID_TZ = tz.tzutc()
 DRUID_ANALYSIS_TYPES = ['cardinality']
+
+PBI_AUTHORITY=  'https://login.microsoftonline.com/common'
+PBI_RESOURCE= 'https://analysis.windows.net/powerbi/api'
+PBI_BACKEND_URL=  '/api/token'
+PBI_CLIENTID= '76e0b486-080f-46c2-8b4a-4ae88abda5e3'
+PBI_USERNAME= 'savvybi@savvybi.com.au'
+PBI_PASSWORD= 'MB(?ug)u#Q5=*]tZ'
+# if these are not set, it is going to get first workspace and first report
+PBI_WORKSPACE_NAME= 'App Own Embeded v2'
+PBI_REPORT_NAME=  'Procurement Analysis Sample PBIX'
 
 # ----------------------------------------------------
 # AUTHENTICATION CONFIG

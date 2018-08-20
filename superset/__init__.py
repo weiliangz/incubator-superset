@@ -9,8 +9,7 @@ from __future__ import unicode_literals
 import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import os
-
+import os, adal, requests, logging
 from flask import Flask, redirect
 from flask_appbuilder import AppBuilder, IndexView, SQLA
 from flask_appbuilder.baseviews import expose
@@ -35,7 +34,7 @@ with open(APP_DIR + '/static/assets/backendSync.json', 'r') as f:
 app = Flask(__name__)
 app.config.from_object(CONFIG_MODULE)
 conf = app.config
-
+log = logging.getLogger()
 #################################################################
 # Handling manifest file logic at app start
 #################################################################
@@ -203,3 +202,77 @@ if flask_app_mutator:
     flask_app_mutator(app)
 
 from superset import views  # noqa
+
+#Get Token
+@app.route('/api/token')
+def get_token():
+    context = adal.AuthenticationContext(
+    app.config.get('PBI_AUTHORITY'),
+    # os.environ['PBI_AUTHORITY'],
+    validate_authority=True,
+    api_version=None)
+    token_response = context.acquire_token_with_username_password(
+        app.config.get('PBI_RESOURCE'),
+        app.config.get('PBI_USERNAME'),
+        app.config.get('PBI_PASSWORD'),
+        app.config.get('PBI_CLIENTID'),
+    )
+    aad_token = token_response['accessToken']
+    headers = {'Authorization': 'Bearer ' + aad_token}
+    response = requests.get(
+        'https://api.powerbi.com/v1.0/myorg/groups', headers=headers)
+
+    # If PBI_WORKSPACE_NAME is set, get workspace with that name
+    # If it is not set or no such workspace, get the first workspace
+    bi_groups = json.loads(response.text)['value']
+    log.debug("group info:\n" + str(bi_groups))
+    group_id = ""
+    if "PBI_WORKSPACE_NAME" in os.environ:
+        for gid in bi_groups:
+            if gid['name'] == app.config.get('PBI_WORKSPACE_NAME'):
+                group_id = gid['id']
+
+    if group_id == "":
+        log.warn("Workspace name is set but there is no such workspace: " + app.config.get('PBI_WORKSPACE_NAME'))
+        group_id = bi_groups[0]['id']
+    response = requests.get(
+        'https://api.powerbi.com/v1.0/myorg/groups/' + group_id + '/reports', headers=headers)
+
+    # Pick the 1st report in the App Workspace (aka group)
+    bi_reports = json.loads(response.text)['value']
+
+    log.debug("Reports json:\n"+ str(bi_reports))
+
+    reportId = embedUrl = ""
+    if "PBI_REPORT_NAME" in os.environ:
+        for rid in bi_reports:
+            if rid['name'] == app.config.get('PBI_REPORT_NAME'):
+                reportId = rid['id']
+                embedUrl = rid['embedUrl']
+
+    if reportId == "":
+        log.warn("Report name is set but there is no such report: " + app.config.get('PBI_REPORT_NAME'))
+        reportId = bi_reports[0]['id']
+        embedUrl = bi_reports[0]['embedUrl']
+
+    post_data = post_data = \
+    """
+        {
+            "accessLevel": "View"
+        }
+    """
+
+    headers.update({'Content-type': 'application/json'})
+
+    response = requests.post('https://api.powerbi.com/v1.0/myorg/groups/' + group_id + \
+         '/reports/' + reportId + '/GenerateToken',data = post_data, headers=headers)
+
+    report_token = json.loads(response.text)['token']
+
+    j = '{{\
+            "embedToken": "{:s}",\
+            "embedUrl": "{:s}",\
+            "reportId": "{:s}"\
+         }}'.format(report_token, embedUrl, reportId)
+
+    return j, 200, {'Content-Type': 'application/json'}

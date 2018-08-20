@@ -85,8 +85,7 @@ export default class Control extends React.PureComponent {
     return (
       <div
         style={divStyle}
-        onMouseEnter={this.setHover.bind(this, true)}
-        onMouseLeave={this.setHover.bind(this, false)}
+
       >
         <ControlType
           onChange={this.onChange}

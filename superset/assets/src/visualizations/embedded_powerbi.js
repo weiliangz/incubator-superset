@@ -9,7 +9,6 @@ function embeddedPowerBIWidget(slice) {
 //   const iframe = slice.container.find('iframe');
 //   iframe.css('height', slice.height());
 //   iframe.attr('src', url);
-
     const content = '<div id="embedContainer" style="width:100%; height: 800px"></div>';
 
     slice.container.html(content);

@@ -89,6 +89,15 @@
           <script src="{{ entry }}"></script>
           <script>
             $(document).ready(function() {
+              function get_token_embed(backendUrl) {
+                $.ajax({
+                    url: "{{ appbuilder.app.config.get('PBI_BACKEND_URL') }}",
+                    success: result => {
+                      $('#formInlineName:first').val(''+result.embedToken);
+                    },
+                });
+              }
+              get_token_embed();
               $("#toggle").click(function() {
                 $("#button-animation").toggleClass("test");
                 $("#content .col-lg-8").toggleClass("content-center");
