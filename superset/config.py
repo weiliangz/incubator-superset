@@ -112,15 +112,15 @@ DRUID_IS_ACTIVE = True
 DRUID_TZ = tz.tzutc()
 DRUID_ANALYSIS_TYPES = ['cardinality']
 
-PBI_AUTHORITY=  'https://login.microsoftonline.com/common'
-PBI_RESOURCE= 'https://analysis.windows.net/powerbi/api'
-PBI_BACKEND_URL=  '/api/token'
-PBI_CLIENTID= ''
-PBI_USERNAME= ''
-PBI_PASSWORD= ''
+PBI_AUTHORITY =  os.environ['PBI_AUTHORITY']
+PBI_RESOURCE = os.environ['PBI_RESOURCE']
+PBI_BACKEND_URL =  '/api/token'
+PBI_CLIENTID = os.environ['PBI_CLIENTID']
+PBI_USERNAME = os.environ['PBI_USERNAME']
+PBI_PASSWORD = os.environ['PBI_PASSWORD']
 # if these are not set, it is going to get first workspace and first report
-PBI_WORKSPACE_NAME= 'App Own Embeded v2'
-PBI_REPORT_NAME=  'Procurement Analysis Sample PBIX'
+PBI_WORKSPACE_NAME = 'App Own Embeded v2'
+PBI_REPORT_NAME =  'Procurement Analysis Sample PBIX'
 
 # ----------------------------------------------------
 # AUTHENTICATION CONFIG

@@ -1,0 +1,5 @@
+export PBI_AUTHORITY=""
+export PBI_RESOURCE=""
+export PBI_CLIENTID=""
+export PBI_USERNAME=""
+export PBI_PASSWORD=""
