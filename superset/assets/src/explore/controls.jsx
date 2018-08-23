@@ -1164,6 +1164,100 @@ export const controls = {
     default: 'https://www.youtube.com/embed/AdSZJzb-aX8',
   },
 
+
+
+
+
+
+
+
+
+
+  token: {
+    type: 'TextControl',
+    label: t('Access Token'),
+    description: t('Access Token is require'),
+    default: '',
+  },
+
+  embed_url: {
+    type: 'TextControl',
+    label: t('Embed Url'),
+    description: t('Embed Url is require'),
+    default: '',
+  },
+
+  report_id: {
+    type: 'TextControl',
+    label: t('Report ID'),
+    description: t('Report ID is require'),
+    default: '',
+  },
+
+  page_name: {
+    type: 'TextControl',
+    label: t('Page Name'),
+    description: t('Page Name is require'),
+    default: '',
+  },
+
+  visual_name: {
+    type: 'TextControl',
+    label: t('Visual Name'),
+    description: t('Visual Name is require'),
+    default: '',
+  },
+
+  dashboard_id: {
+    type: 'TextControl',
+    label: t('Dashboard ID'),
+    description: t('Dashboard ID is require'),
+    default: '',
+  },
+  
+  title_id: {
+    type: 'TextControl',
+    label: t('Title ID'),
+    description: t('Title ID is require'),
+    default: '',
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   x_axis_label: {
     type: 'TextControl',
     label: t('X Axis Label'),

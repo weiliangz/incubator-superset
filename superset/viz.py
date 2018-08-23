@@ -1835,6 +1835,88 @@ class IFrameViz(BaseViz):
         return None
 
 
+
+
+
+
+
+
+
+
+
+class EmbedPowerBIViz(BaseViz):
+
+    """You can squeeze just about anything in this iFrame component"""
+
+    viz_type = 'powerBI_report'
+    verbose_name = _('PowerBI')
+    credits = 'a <a href="https://github.com/airbnb/superset">Superset</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
+
+
+class EmbedPowerBIViz_Visual(BaseViz):
+
+    """You can squeeze just about anything in this iFrame component"""
+
+    viz_type = 'powerBI_report_visual'
+    verbose_name = _('PowerBIVisual')
+    credits = 'a <a href="https://github.com/airbnb/superset">Superset</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
+
+class EmbedPowerBIViz_Dashboard(BaseViz):
+
+    """You can squeeze just about anything in this iFrame component"""
+
+    viz_type = 'powerBI_report_dashboard'
+    verbose_name = _('PowerBIReportDashboard')
+    credits = 'a <a href="https://github.com/airbnb/superset">Superset</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
+
+class EmbedPowerBIViz_Title(BaseViz):
+
+    """You can squeeze just about anything in this iFrame component"""
+
+    viz_type = 'powerBI_report_title'
+    verbose_name = _('PowerBIReportTitle')
+    credits = 'a <a href="https://github.com/airbnb/superset">Superset</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
+
+
+
+
+
+
+
+
+
+
+
+
+
 class ParallelCoordinatesViz(BaseViz):
 
     """Interactive parallel coordinate implementation

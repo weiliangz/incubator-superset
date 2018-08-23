@@ -136,6 +136,209 @@ export const visTypes = {
     },
   },
 
+
+
+
+
+
+
+
+
+
+
+
+
+  powerBI_report: {
+    label: t('PowerBI Report'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Access Token'),
+        expanded: true,
+        controlSetRows: [
+          ['token'],
+        ],
+      },
+
+      {
+        label: t('Embed URL'),
+        expanded: true,
+        controlSetRows: [
+          ['embed_url'],
+        ],
+      },
+
+      {
+        label: t('Report ID'),
+        expanded: true,
+        controlSetRows: [
+          ['report_id'],
+        ],
+      },
+      
+    ],
+    controlOverrides: {
+      row_limit: {
+        default: 25,
+      },
+    },
+  },
+
+
+
+  powerBI_report_visual: {
+    label: t('PowerBI Report Visual'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Access Token'),
+        expanded: true,
+        controlSetRows: [
+          ['token'],
+        ],
+      },
+
+      {
+        label: t('Embed URL'),
+        expanded: true,
+        controlSetRows: [
+          ['embed_url'],
+        ],
+      },
+
+      {
+        label: t('Report ID'),
+        expanded: true,
+        controlSetRows: [
+          ['report_id'],
+        ],
+      },
+
+      {
+        label: t('Page Name'),
+        expanded: true,
+        controlSetRows: [
+          ['page_name'],
+        ],
+      },
+
+      {
+        label: t('Visual Name'),
+        expanded: true,
+        controlSetRows: [
+          ['visual_name'],
+        ],
+      },
+      
+    ],
+    controlOverrides: {
+      row_limit: {
+        default: 25,
+      },
+    },
+  },
+
+
+  powerBI_report_dashboard: {
+    label: t('PowerBI Report Dashboard'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Access Token'),
+        expanded: true,
+        controlSetRows: [
+          ['token'],
+        ],
+      },
+
+      {
+        label: t('Embed URL'),
+        expanded: true,
+        controlSetRows: [
+          ['embed_url'],
+        ],
+      },
+
+      {
+        label: t('Dashboard ID'),
+        expanded: true,
+        controlSetRows: [
+          ['dashboard_id'],
+        ],
+      },
+    ],
+    controlOverrides: {
+      row_limit: {
+        default: 25,
+      },
+    },
+  },
+
+
+
+  powerBI_report_title: {
+    label: t('PowerBI Report Title'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Access Token'),
+        expanded: true,
+        controlSetRows: [
+          ['token'],
+        ],
+      },
+
+      {
+        label: t('Embed URL'),
+        expanded: true,
+        controlSetRows: [
+          ['embed_url'],
+        ],
+      },
+
+      {
+        label: t('Dashboard ID'),
+        expanded: true,
+        controlSetRows: [
+          ['dashboard_id'],
+        ],
+      },
+
+      {
+        label: t('Title ID'),
+        expanded: true,
+        controlSetRows: [
+          ['title_id'],
+        ],
+      },
+    ],
+    controlOverrides: {
+      row_limit: {
+        default: 25,
+      },
+    },
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   pie: {
     label: t('Pie Chart'),
     showOnExplore: true,
