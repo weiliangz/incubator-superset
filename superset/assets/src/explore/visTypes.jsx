@@ -146,7 +146,26 @@ export const visTypes = {
 
 
 
-
+  dc_crossfilter: {
+    label: t('DC_Crossfilter Example'),
+    showOnExplore: true,
+    controlPanelSections: [
+      {
+        label: t('Query'),
+        expanded: true,
+        controlSetRows: [
+          ['metrics', 'groupby'],
+          ['limit'],
+        ],
+      },
+      {
+        label: t('Chart Options'),
+        controlSetRows: [
+          ['color_scheme'],
+        ],
+      },
+    ],
+  },
 
   powerBI_report: {
     label: t('PowerBI Report'),

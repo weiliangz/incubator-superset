@@ -54,6 +54,7 @@ export const VIZ_TYPES = {
   powerBI_report_visual: 'powerBI_report_visual',
   powerBI_report_dashboard: 'powerBI_report_dashboard',
   powerBI_report_title: 'powerBI_report_title',
+  dc_crossfilter: 'dc_crossfilter',
 
 };
 
@@ -150,6 +151,8 @@ const vizMap = {
   [VIZ_TYPES.powerBI_report_dashboard]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi_dashboard" */ './embedded_powerbi_dashboard.js')),
 
   [VIZ_TYPES.powerBI_report_title]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi_title" */ './embedded_powerbi_title.js')),
+
+  [VIZ_TYPES.dc_crossfilter]: () => loadVis(import(/* webpackChunkName: "embedded_powerbi_title" */ './dc_d3_crossfilter.js')),
 };
 
 export default vizMap;

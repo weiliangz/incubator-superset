@@ -1842,7 +1842,16 @@ class IFrameViz(BaseViz):
 
 
 
+class DCCrossfilterViz(BaseViz):
+    """ Funnel Chart"""
+    viz_type = 'dc_crossfilter'
+    is_timeseries = False
 
+    def get_data(self, df):
+        fd = self.form_data
+        df = df.reset_index()
+        s = df.to_dict(orient='records')
+        return s
 
 class EmbedPowerBIViz(BaseViz):
 
