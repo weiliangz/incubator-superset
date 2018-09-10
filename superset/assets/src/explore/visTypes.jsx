@@ -136,17 +136,16 @@ export const visTypes = {
     },
   },
 
-
-
-
-
-
-
-
-
-
-
-
+  area_chart: {
+    label: t('Area Chart'),
+    controlPanelSections: [
+      {
+        label: t('Options'),
+        expanded: true,
+        controlSetRows: [],
+      },
+    ],
+  },
 
   powerBI_report: {
     label: t('PowerBI Report'),

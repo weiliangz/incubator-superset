@@ -3,6 +3,7 @@
 // You ***should*** use these to reference viz_types in code
 export const VIZ_TYPES = {
   area: 'area',
+  area_chart: 'area_chart',
   bar: 'bar',
   big_number: 'big_number',
   big_number_total: 'big_number_total',
@@ -78,6 +79,7 @@ const vizMap = {
   [VIZ_TYPES.bullet]: loadNvd3,
   [VIZ_TYPES.cal_heatmap]: () =>
     loadVis(import(/* webpackChunkName: "cal_heatmap" */ './cal_heatmap.js')),
+  [VIZ_TYPES.area_chart]: () => loadVis(import(/* webpackChunkName: "area_chart" */ './area_chart.js')),
   [VIZ_TYPES.compare]: loadNvd3,
   [VIZ_TYPES.directed_force]: () =>
     loadVis(import(/* webpackChunkName: "directed_force" */ './directed_force.js')),

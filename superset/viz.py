@@ -1835,8 +1835,20 @@ class IFrameViz(BaseViz):
         return None
 
 
+class AreaChartViz(BaseViz):
 
+    """You can squeeze just about anything in this AreaChart component"""
 
+    viz_type = 'area_chart'
+    verbose_name = _('Area chart')
+    credits = 'a <a href="https://github.com/airbnb/superset">Superset</a> original'
+    is_timeseries = False
+
+    def query_obj(self):
+        return None
+
+    def get_df(self, query_obj=None):
+        return None
 
 
 
